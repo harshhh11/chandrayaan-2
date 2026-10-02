@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import * as THREE from 'three';
 import { 
@@ -8,7 +8,7 @@ import {
   Database, GitCompare, Maximize2, ShieldCheck, MapPin, 
   RotateCw, ZoomIn, ZoomOut, ArrowLeft, Sun, Eye, Activity,
   Sliders, Play, Pause, ChevronRight, Download, Sparkles, Navigation,
-  Terminal, SlidersHorizontal, Focus, RefreshCw, Cpu, Radio, Shield, CornerDownRight
+  Focus, RefreshCw
 } from 'lucide-react';
 import { EdolusTopNav } from '@/components/layout/EdolusTopNav';
 
@@ -52,7 +52,7 @@ const TARGETS: LunarTarget[] = [
     instruments: 'OHRC 0.25m / TMC-2 / IIRS',
     sensorResolution: '0.25 m/px',
     footprintId: 'ch2_ohr_ncp_20250417T081230_d_img_d18',
-    description: 'High-priority benchmark calibration site with multi-scale optical coverage and meter-scale boulder clusters.',
+    description: 'High-priority benchmark calibration site with multi-scale optical coverage and boulder clusters.',
     rimWest: '+1.2 km',
     floorDepth: '-3.2 km',
     rimEast: '+1.4 km',
@@ -74,7 +74,7 @@ const TARGETS: LunarTarget[] = [
     instruments: 'OHRC 0.25m / TMC-2 Stereo',
     sensorResolution: '0.25 m/px',
     footprintId: 'ch2_ohr_ncp_20250823T124500_d_img_d18',
-    description: 'Chandrayaan-3 landing touchdown locus with multi-temporal pre- and post-landing high-res registration.',
+    description: 'Chandrayaan-3 landing touchdown locus with multi-temporal pre- and post-landing registration.',
     rimWest: '+0.4 km',
     floorDepth: '-1.8 km',
     rimEast: '+0.6 km',
@@ -96,7 +96,7 @@ const TARGETS: LunarTarget[] = [
     instruments: 'TMC-2 Triplet Stereo',
     sensorResolution: '5.0 m/px',
     footprintId: 'ch2_tmc_ndn_20250215T043000_d_img_d18',
-    description: 'Copernican-age impact structure with central peak uplift and high-albedo ejecta ray systems.',
+    description: 'Copernican impact structure with central peak uplift and high-albedo ejecta ray systems.',
     rimWest: '+2.1 km',
     floorDepth: '-4.8 km',
     rimEast: '+2.4 km',
@@ -159,12 +159,9 @@ export default function Scientific3DPlanetaryWorkstation() {
   const [showOrbit, setShowOrbit] = useState<boolean>(true);
   const [showFootprints, setShowFootprints] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(true);
-  const [showSensorFrustum, setShowSensorFrustum] = useState<boolean>(true);
   
   // UI Panels state
-  const [activeSidePanel, setActiveSidePanel] = useState<'targets' | 'layers' | 'shading' | 'none'>('none');
-  const [hoveredTarget, setHoveredTarget] = useState<LunarTarget | null>(null);
-  const [hoverScreenPos, setHoverScreenPos] = useState<{ x: number; y: number } | null>(null);
+  const [activeSidePanel, setActiveSidePanel] = useState<'targets' | 'shading' | 'none'>('none');
   const [currentTime, setCurrentTime] = useState('');
 
   // Three.js instances ref
@@ -226,20 +223,18 @@ export default function Scientific3DPlanetaryWorkstation() {
     albedoCanvas.height = height;
     const ctxA = albedoCanvas.getContext('2d');
     if (ctxA) {
-      // Base anorthosite highland
       ctxA.fillStyle = '#82878e';
       ctxA.fillRect(0, 0, width, height);
 
-      // Lowland Maria Basalts
       const maria = [
-        { x: 0.35, y: 0.40, rx: 190, ry: 130 }, // Oceanus Procellarum
-        { x: 0.45, y: 0.32, rx: 130, ry: 95 },  // Mare Imbrium
-        { x: 0.55, y: 0.36, rx: 95, ry: 80 },   // Mare Serenitatis
-        { x: 0.60, y: 0.45, rx: 85, ry: 75 },   // Mare Tranquillitatis
-        { x: 0.58, y: 0.58, rx: 75, ry: 65 },   // Mare Nectaris
-        { x: 0.68, y: 0.48, rx: 80, ry: 70 },   // Mare Crisium
-        { x: 0.46, y: 0.52, rx: 90, ry: 70 },   // Mare Nubium
-        { x: 0.48, y: 0.64, rx: 70, ry: 55 },   // Mare Humorum
+        { x: 0.35, y: 0.40, rx: 190, ry: 130 },
+        { x: 0.45, y: 0.32, rx: 130, ry: 95 },
+        { x: 0.55, y: 0.36, rx: 95, ry: 80 },
+        { x: 0.60, y: 0.45, rx: 85, ry: 75 },
+        { x: 0.58, y: 0.58, rx: 75, ry: 65 },
+        { x: 0.68, y: 0.48, rx: 80, ry: 70 },
+        { x: 0.46, y: 0.52, rx: 90, ry: 70 },
+        { x: 0.48, y: 0.64, rx: 70, ry: 55 },
       ];
 
       maria.forEach(m => {
@@ -256,13 +251,12 @@ export default function Scientific3DPlanetaryWorkstation() {
         ctxA.fill();
       });
 
-      // Ray Systems & Impact Craters
       const craters = [
-        { x: 0.47, y: 0.74, r: 16, rays: true }, // Tycho
-        { x: 0.44, y: 0.45, r: 18, rays: true }, // Copernicus
-        { x: 0.39, y: 0.45, r: 12, rays: true }, // Kepler
-        { x: 0.65, y: 0.91, r: 14, rays: false },// Boguslawsky
-        { x: 0.50, y: 0.99, r: 15, rays: false },// Shackleton
+        { x: 0.47, y: 0.74, r: 16, rays: true },
+        { x: 0.44, y: 0.45, r: 18, rays: true },
+        { x: 0.39, y: 0.45, r: 12, rays: true },
+        { x: 0.65, y: 0.91, r: 14, rays: false },
+        { x: 0.50, y: 0.99, r: 15, rays: false },
       ];
 
       craters.forEach(c => {
@@ -293,7 +287,6 @@ export default function Scientific3DPlanetaryWorkstation() {
         ctxA.fill();
       });
 
-      // Subtle fine micro-crater field
       ctxA.fillStyle = 'rgba(255,255,255,0.05)';
       for (let i = 0; i < 2000; i++) {
         const rx = Math.random() * width;
@@ -306,23 +299,22 @@ export default function Scientific3DPlanetaryWorkstation() {
     }
     const albedoTex = new THREE.CanvasTexture(albedoCanvas);
 
-    // 2. Scientific Hypsometric Elevation Map
+    // 2. Elevation Hypsometric Map
     const elevCanvas = document.createElement('canvas');
     elevCanvas.width = width;
     elevCanvas.height = height;
     const ctxE = elevCanvas.getContext('2d');
     if (ctxE) {
       const eGrad = ctxE.createLinearGradient(0, 0, 0, height);
-      eGrad.addColorStop(0, '#4a154b'); // High northern terrains
+      eGrad.addColorStop(0, '#4a154b');
       eGrad.addColorStop(0.2, '#1a365d');
       eGrad.addColorStop(0.5, '#0284c7');
       eGrad.addColorStop(0.7, '#059669');
       eGrad.addColorStop(0.85, '#d97706');
-      eGrad.addColorStop(1, '#dc2626'); // South pole Aitken basin rim
+      eGrad.addColorStop(1, '#dc2626');
       ctxE.fillStyle = eGrad;
       ctxE.fillRect(0, 0, width, height);
 
-      // Lowland Basins (Deep Blue-Black)
       ctxE.fillStyle = 'rgba(10, 15, 30, 0.75)';
       ctxE.beginPath();
       ctxE.ellipse(0.45 * width, 0.38 * height, 250, 170, 0, 0, Math.PI * 2);
@@ -330,7 +322,7 @@ export default function Scientific3DPlanetaryWorkstation() {
     }
     const elevTex = new THREE.CanvasTexture(elevCanvas);
 
-    // 3. Thermal IR Radiance Map
+    // 3. Thermal IR Map
     const thermalCanvas = document.createElement('canvas');
     thermalCanvas.width = width;
     thermalCanvas.height = height;
@@ -343,17 +335,17 @@ export default function Scientific3DPlanetaryWorkstation() {
         0.5 * width, 0.5 * height, 10,
         0.5 * width, 0.5 * height, 520
       );
-      tGrad.addColorStop(0, '#ffffff'); // 390 K equatorial subsolar point
+      tGrad.addColorStop(0, '#ffffff');
       tGrad.addColorStop(0.3, '#ea580c');
       tGrad.addColorStop(0.6, '#7c2d12');
       tGrad.addColorStop(0.85, '#1e1b4b');
-      tGrad.addColorStop(1, '#02020a'); // 40 K permanent polar shadows
+      tGrad.addColorStop(1, '#02020a');
       ctxT.fillStyle = tGrad;
       ctxT.fillRect(0, 0, width, height);
     }
     const thermalTex = new THREE.CanvasTexture(thermalCanvas);
 
-    // 4. Radar SAR Rugosity Map
+    // 4. Radar SAR Map
     const radarCanvas = document.createElement('canvas');
     radarCanvas.width = width;
     radarCanvas.height = height;
@@ -384,7 +376,6 @@ export default function Scientific3DPlanetaryWorkstation() {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // SCENE & CAMERA (Cinematic 3D Scientific Viewport)
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#020409');
 
@@ -402,7 +393,6 @@ export default function Scientific3DPlanetaryWorkstation() {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // SCIENTIFIC LIGHTING (Terminator Sun + Deep Space Ambience)
     const ambientLight = new THREE.AmbientLight(0x0a121e, 0.18);
     scene.add(ambientLight);
 
@@ -417,7 +407,7 @@ export default function Scientific3DPlanetaryWorkstation() {
     earthAlbedoRim.position.set(-8, -3, -5);
     scene.add(earthAlbedoRim);
 
-    // BACKGROUND STARFIELD
+    // Starfield
     const starGeo = new THREE.BufferGeometry();
     const starCount = 1400;
     const starPositions = new Float32Array(starCount * 3);
@@ -431,7 +421,7 @@ export default function Scientific3DPlanetaryWorkstation() {
     const stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
 
-    // 3D HERO LUNAR GLOBE
+    // Moon Globe
     const moonGroup = new THREE.Group();
     scene.add(moonGroup);
 
@@ -448,11 +438,10 @@ export default function Scientific3DPlanetaryWorkstation() {
     moonMesh.receiveShadow = true;
     moonGroup.add(moonMesh);
 
-    // BODY-FIXED LAT/LON GRATICULE GRID
+    // Lat/Lon Graticule Grid
     const gridGroup = new THREE.Group();
     moonGroup.add(gridGroup);
 
-    // Parallels (Latitudes: -80, -60, -30, 0, 30, 60, 80)
     [-80, -60, -30, 0, 30, 60, 80].forEach(lat => {
       const radiusAtLat = 2.103 * Math.cos(lat * (Math.PI / 180));
       const yAtLat = 2.103 * Math.sin(lat * (Math.PI / 180));
@@ -469,7 +458,6 @@ export default function Scientific3DPlanetaryWorkstation() {
       gridGroup.add(ring);
     });
 
-    // Meridians (Longitudes: 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330)
     [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].forEach(lon => {
       const circleGeo = new THREE.RingGeometry(2.101, 2.103, 96);
       const circleMat = new THREE.MeshBasicMaterial({ 
@@ -483,7 +471,7 @@ export default function Scientific3DPlanetaryWorkstation() {
       gridGroup.add(ring);
     });
 
-    // SCIENTIFIC TARGET MARKERS & HUD RETICLES
+    // Targets & Reticles
     const markersGroup = new THREE.Group();
     moonGroup.add(markersGroup);
 
@@ -493,13 +481,11 @@ export default function Scientific3DPlanetaryWorkstation() {
       markerGroup.position.copy(pos);
       markerGroup.lookAt(new THREE.Vector3(0, 0, 0));
 
-      // Precision Center Crosshair Node
       const pinGeo = new THREE.SphereGeometry(0.025, 16, 16);
       const pinMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(t.color) });
       const pin = new THREE.Mesh(pinGeo, pinMat);
       markerGroup.add(pin);
 
-      // Outer Targeting HUD Reticle (Corner Brackets)
       const reticleGeo = new THREE.RingGeometry(0.05, 0.065, 32);
       const reticleMat = new THREE.MeshBasicMaterial({ 
         color: new THREE.Color(t.color), 
@@ -514,69 +500,35 @@ export default function Scientific3DPlanetaryWorkstation() {
       markersGroup.add(markerGroup);
     });
 
-    // REMOTE-SENSING ACQUISITION FOOTPRINTS
+    // Footprints
     const footprintsGroup = new THREE.Group();
     moonGroup.add(footprintsGroup);
 
-    // 1. OHRC 0.25m Ultra-High-Res Polygon over Boguslawsky E
     const ohrcPos = latLonToVector3(-74.32, 53.64, 2.108);
     const ohrcGeo = new THREE.PlaneGeometry(0.18, 0.28);
-    const ohrcMat = new THREE.MeshBasicMaterial({ 
-      color: 0x00f0ff, 
-      side: THREE.DoubleSide, 
-      transparent: true, 
-      opacity: 0.4 
-    });
+    const ohrcMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.4 });
     const ohrcMesh = new THREE.Mesh(ohrcGeo, ohrcMat);
     ohrcMesh.position.copy(ohrcPos);
     ohrcMesh.lookAt(new THREE.Vector3(0, 0, 0));
     footprintsGroup.add(ohrcMesh);
 
-    // OHRC Bounding Line
-    const ohrcLineGeo = new THREE.EdgesGeometry(ohrcGeo);
-    const ohrcLineMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 2 });
-    const ohrcLine = new THREE.LineSegments(ohrcLineGeo, ohrcLineMat);
-    ohrcMesh.add(ohrcLine);
-
-    // 2. TMC-2 Stereo Triplet Swath
     const tmcPos = latLonToVector3(-43.35, -11.36, 2.106);
     const tmcGeo = new THREE.PlaneGeometry(0.35, 0.95);
-    const tmcMat = new THREE.MeshBasicMaterial({ 
-      color: 0x38bdf8, 
-      side: THREE.DoubleSide, 
-      transparent: true, 
-      opacity: 0.28 
-    });
+    const tmcMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.28 });
     const tmcMesh = new THREE.Mesh(tmcGeo, tmcMat);
     tmcMesh.position.copy(tmcPos);
     tmcMesh.lookAt(new THREE.Vector3(0, 0, 0));
     footprintsGroup.add(tmcMesh);
 
-    const tmcLineGeo = new THREE.EdgesGeometry(tmcGeo);
-    const tmcLineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
-    const tmcLine = new THREE.LineSegments(tmcLineGeo, tmcLineMat);
-    tmcMesh.add(tmcLine);
-
-    // 3. IIRS Hyperspectral Polar Swath
     const iirsPos = latLonToVector3(-89.90, 0, 2.106);
     const iirsGeo = new THREE.PlaneGeometry(0.24, 0.5);
-    const iirsMat = new THREE.MeshBasicMaterial({ 
-      color: 0xf59e0b, 
-      side: THREE.DoubleSide, 
-      transparent: true, 
-      opacity: 0.32 
-    });
+    const iirsMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide, transparent: true, opacity: 0.32 });
     const iirsMesh = new THREE.Mesh(iirsGeo, iirsMat);
     iirsMesh.position.copy(iirsPos);
     iirsMesh.lookAt(new THREE.Vector3(0, 0, 0));
     footprintsGroup.add(iirsMesh);
 
-    const iirsLineGeo = new THREE.EdgesGeometry(iirsGeo);
-    const iirsLineMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
-    const iirsLine = new THREE.LineSegments(iirsLineGeo, iirsLineMat);
-    iirsMesh.add(iirsLine);
-
-    // 100 KM POLAR ORBITAL TRAJECTORY ARC
+    // Orbit
     const orbitRadius = 2.52;
     const orbitPoints = [];
     for (let i = 0; i <= 128; i++) {
@@ -599,18 +551,15 @@ export default function Scientific3DPlanetaryWorkstation() {
     orbitLine.computeLineDistances();
     scene.add(orbitLine);
 
-    // CHANDRAYAAN-2 SPACECRAFT BUS & OPTICAL FRUSTUM
+    // Satellite
     const satelliteGroup = new THREE.Group();
     scene.add(satelliteGroup);
 
-    // Satellite Main Gold Thermal Foil Body
     const satBodyGeo = new THREE.BoxGeometry(0.1, 0.1, 0.14);
     const satBodyMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.95, roughness: 0.15 });
     const satBody = new THREE.Mesh(satBodyGeo, satBodyMat);
-    satBody.castShadow = true;
     satelliteGroup.add(satBody);
 
-    // Solar Wings
     const panelGeo = new THREE.BoxGeometry(0.3, 0.09, 0.008);
     const panelMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.85, roughness: 0.25 });
     const leftPanel = new THREE.Mesh(panelGeo, panelMat);
@@ -621,20 +570,14 @@ export default function Scientific3DPlanetaryWorkstation() {
     rightPanel.position.set(0.22, 0, 0);
     satelliteGroup.add(rightPanel);
 
-    // Optical Sensor Frustum Scanning Beam
     const coneGeo = new THREE.ConeGeometry(0.38, 0.72, 16, 1, true);
-    const coneMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      transparent: true,
-      opacity: 0.2,
-      side: THREE.DoubleSide
-    });
+    const coneMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     const sensorFrustum = new THREE.Mesh(coneGeo, coneMat);
     sensorFrustum.position.set(0, -0.36, 0);
     sensorFrustum.rotation.x = Math.PI;
     satelliteGroup.add(sensorFrustum);
 
-    // INTERACTIVE CONTROLS
+    // Controls
     const controls = {
       isDragging: false,
       prevMousePos: { x: 0, y: 0 },
@@ -687,14 +630,12 @@ export default function Scientific3DPlanetaryWorkstation() {
     domElem.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('resize', handleResize);
 
-    // ANIMATION TICK
     let animationFrameId: number;
     let orbitAngle = 0;
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      // Damped camera rotation & zoom
       controls.rotX += (controls.targetRotX - controls.rotX) * 0.08;
       controls.rotY += (controls.targetRotY - controls.rotY) * 0.08;
       controls.zoom += (controls.targetZoom - controls.zoom) * 0.08;
@@ -707,7 +648,6 @@ export default function Scientific3DPlanetaryWorkstation() {
       moonGroup.rotation.y = controls.rotY;
       camera.position.z = controls.zoom;
 
-      // Satellite polar orbit sweep
       orbitAngle += 0.007;
       const satY = orbitRadius * Math.cos(orbitAngle);
       const satZ = orbitRadius * Math.sin(orbitAngle) * 0.99;
@@ -747,7 +687,6 @@ export default function Scientific3DPlanetaryWorkstation() {
     };
   }, []);
 
-  // Update Surface Textures upon Render Mode change
   useEffect(() => {
     if (!sceneRef.current) return;
     const { moonMesh } = sceneRef.current;
@@ -769,24 +708,20 @@ export default function Scientific3DPlanetaryWorkstation() {
     (moonMesh.material as THREE.MeshStandardMaterial).needsUpdate = true;
   }, [renderMode]);
 
-  // Update Sun Directional Light from Azimuth Slider
   useEffect(() => {
     if (!sceneRef.current) return;
     const rad = (sunAngle * Math.PI) / 180;
     sceneRef.current.sunLight.position.set(Math.cos(rad) * 11, 4, Math.sin(rad) * 11);
   }, [sunAngle]);
 
-  // Layer Toggles
   useEffect(() => {
     if (!sceneRef.current) return;
     sceneRef.current.orbitLine.visible = showOrbit;
     sceneRef.current.satelliteGroup.visible = showOrbit;
     sceneRef.current.footprintsGroup.visible = showFootprints;
     sceneRef.current.gridGroup.visible = showGrid;
-    sceneRef.current.sensorFrustum.visible = showSensorFrustum;
-  }, [showOrbit, showFootprints, showGrid, showSensorFrustum]);
+  }, [showOrbit, showFootprints, showGrid]);
 
-  // Target Fly-To Orientation
   const flyToTarget = (target: LunarTarget) => {
     setSelectedTarget(target);
     if (!sceneRef.current) return;
@@ -811,16 +746,16 @@ export default function Scientific3DPlanetaryWorkstation() {
     <div className="h-screen w-screen overflow-hidden bg-[#020409] text-[#E2E8F0] font-sans flex flex-col select-none">
       
       {/* 1. TOP SCIENTIFIC COMMAND & NAVIGATION BAR */}
-      <header className="h-11 border-b border-white/10 bg-[#040812] px-4 flex items-center justify-between z-40 text-xs font-mono shrink-0">
+      <header className="h-12 border-b border-white/10 bg-[#040812] px-4 sm:px-6 flex items-center justify-between z-40 text-xs font-mono shrink-0">
         
-        {/* Left: EDOLUS Brand & Workstation Status */}
+        {/* Left: EDOLUS Brand & Status */}
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="flex items-center gap-2 text-white hover:text-[#00F0FF] transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-white hover:text-[#00F0FF] transition-colors">
             <span className="font-extrabold tracking-[0.25em] text-white text-[13px]">EDOLUS</span>
             <span className="text-[9px] text-[#00F0FF] tracking-widest uppercase">// 3D PLANETARY LAB</span>
           </Link>
-          <div className="h-3.5 w-[1px] bg-white/10" />
-          <div className="flex items-center gap-2 text-[10px] text-slate-400">
+          <div className="h-3.5 w-[1px] bg-white/10 hidden sm:block" />
+          <div className="hidden sm:flex items-center gap-2 text-[10px] text-slate-400">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
             <span className="tracking-widest uppercase">SPACECRAFT: CHANDRAYAAN-2 (ISRO-PDS4)</span>
           </div>
@@ -832,17 +767,17 @@ export default function Scientific3DPlanetaryWorkstation() {
           <Link href="/datasets" className="hover:text-white transition-colors">DATASETS</Link>
           <Link href="/correspondence" className="hover:text-white transition-colors">CORRESPONDENCE</Link>
           <Link href="/reports" className="hover:text-white transition-colors">REPORTS</Link>
-          <span className="text-[#00F0FF] font-bold border-b border-[#00F0FF] pb-0.5">3D ANALYSIS</span>
+          <span className="text-[#00F0FF] font-bold border-b-2 border-[#00F0FF] pb-0.5">3D ANALYSIS</span>
           <Link href="/analytics" className="hover:text-white transition-colors">ANALYTICS</Link>
         </nav>
 
-        {/* Right: Scientific Search / Coordinate Lookup & UTC Time */}
+        {/* Right: Search Field & UTC Time */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#07111E] border border-white/10 text-[10px] text-slate-300 w-56 sm:w-64">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#07111E] border border-white/10 text-[10px] text-slate-300 w-44 sm:w-56">
             <span className="text-[#00F0FF]">⌕</span>
             <input 
               type="text" 
-              placeholder="SEARCH TARGET / IMAGE / COORD" 
+              placeholder="SEARCH TARGET / IMAGE ID" 
               className="bg-transparent border-none outline-none text-[10px] font-mono text-slate-200 placeholder:text-slate-500 w-full"
             />
             <kbd className="text-[8px] bg-white/10 px-1 py-0.5 rounded text-slate-400">⌘K</kbd>
@@ -853,12 +788,11 @@ export default function Scientific3DPlanetaryWorkstation() {
         </div>
       </header>
 
-      {/* 2. MAIN SCIENTIFIC WORKSPACE (VIEWPORT + HUD + MISSION DATA RAIL) */}
+      {/* 2. MAIN SCIENTIFIC WORKSPACE */}
       <div className="flex-1 relative flex overflow-hidden">
         
-        {/* 2A. LEFT NARROW CONTEXTUAL TOOL HUD (Floating Scientific Instrument Rail) */}
+        {/* 2A. LEFT FLOATING TOOL HUD */}
         <div className="absolute top-4 left-4 z-30 flex flex-col gap-1.5 p-1 bg-[#060B14]/90 backdrop-blur-md border border-white/10 rounded-lg text-slate-400 text-[10px] font-mono shadow-2xl">
-          
           <button
             onClick={() => setActiveSidePanel(activeSidePanel === 'targets' ? 'none' : 'targets')}
             className={`p-2 rounded flex flex-col items-center gap-1 transition-all ${
@@ -875,9 +809,7 @@ export default function Scientific3DPlanetaryWorkstation() {
           <button
             onClick={() => setShowFootprints(!showFootprints)}
             className={`p-2 rounded flex flex-col items-center gap-1 transition-all ${
-              showFootprints 
-                ? 'text-[#00F0FF] bg-[#00F0FF]/10' 
-                : 'hover:bg-white/5 hover:text-white'
+              showFootprints ? 'text-[#00F0FF] bg-[#00F0FF]/10' : 'hover:bg-white/5 hover:text-white'
             }`}
             title="Toggle Sensor Footprints (OHRC/TMC/IIRS)"
           >
@@ -932,7 +864,7 @@ export default function Scientific3DPlanetaryWorkstation() {
           </button>
         </div>
 
-        {/* 2B. CONTEXTUAL DRAWER (When Left Tool HUD item is clicked) */}
+        {/* 2B. CONTEXTUAL DRAWER */}
         {activeSidePanel === 'targets' && (
           <div className="absolute top-4 left-20 z-30 w-72 bg-[#060B14]/95 backdrop-blur-md border border-white/10 rounded-lg p-3 text-xs font-mono shadow-2xl space-y-2">
             <div className="flex items-center justify-between border-b border-white/10 pb-1.5 text-[#00F0FF] text-[10px] font-bold tracking-wider">
@@ -996,15 +928,15 @@ export default function Scientific3DPlanetaryWorkstation() {
           </div>
         )}
 
-        {/* 2C. 3D CENTRAL WEBGL CANVAS (Hero Lunar Globe Dominating Viewport) */}
+        {/* 2C. 3D HERO LUNAR GLOBE CANVAS */}
         <div className="flex-1 relative h-full w-full">
           <div 
             ref={canvasContainerRef} 
             className="w-full h-full cursor-grab active:cursor-grabbing bg-[#020409]"
           />
 
-          {/* SUBTLE HUD RETICLE OVER SELECTED TARGET (Technical Coordinates & Reticle) */}
-          <div className="absolute top-4 right-96 pointer-events-none hidden xl:flex flex-col items-end text-right font-mono text-[10px] text-slate-400 space-y-0.5 bg-[#040812]/70 p-2.5 rounded border border-white/10 backdrop-blur-sm">
+          {/* TARGET LOCK HUD OVERLAY */}
+          <div className="absolute top-4 right-80 lg:right-96 pointer-events-none hidden md:flex flex-col items-end text-right font-mono text-[10px] text-slate-400 space-y-0.5 bg-[#040812]/80 p-2.5 rounded border border-white/10 backdrop-blur-sm">
             <div className="flex items-center gap-1.5 text-[#00F0FF] font-bold">
               <Crosshair className="w-3.5 h-3.5" />
               <span>TARGET LOCK: {selectedTarget.code}</span>
@@ -1014,17 +946,15 @@ export default function Scientific3DPlanetaryWorkstation() {
             <div>INCIDENCE: <span className="text-amber-400">{selectedTarget.incidence}</span> | PHASE: <span className="text-white">{selectedTarget.phaseAngle}</span></div>
           </div>
 
-          {/* VIEWPORT SCIENTIFIC AXES & COORD WATERMARK */}
-          <div className="absolute bottom-14 left-20 pointer-events-none text-[9px] font-mono text-slate-500 flex items-center gap-4">
+          {/* WATERMARK */}
+          <div className="absolute bottom-14 left-20 pointer-events-none text-[9px] font-mono text-slate-500 hidden sm:flex items-center gap-4">
             <div>COORDINATE SYSTEM: <span className="text-slate-300">LUNAR BODY-FIXED (IAU 2015)</span></div>
             <div>•</div>
             <div>EPHEMERIS: <span className="text-slate-300">DE421 / SPICE KERNEL</span></div>
           </div>
 
-          {/* 2D. SLIM MISSION-CONTROL TELEMETRY & LIGHTING STRIP (Docked at Viewport Bottom) */}
+          {/* 2D. DOCKED BOTTOM TELEMETRY STRIP */}
           <div className="absolute bottom-0 left-0 right-0 h-11 bg-[#040812]/95 backdrop-blur-md border-t border-white/10 px-4 sm:px-6 flex items-center justify-between z-30 font-mono text-[11px] text-slate-300">
-            
-            {/* Telemetry metrics */}
             <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto py-1">
               <div className="flex items-center gap-2">
                 <span className="text-slate-500 text-[9px]">SUN AZIMUTH:</span>
@@ -1053,7 +983,7 @@ export default function Scientific3DPlanetaryWorkstation() {
                 <span className="text-[#00F0FF] font-bold">100.24 km</span>
               </div>
 
-              <div className="h-3 w-[1px] bg-white/10 hidden lg:block" />
+              <div className="h-3 w-[1px] bg-white/10 hidden xl:block" />
 
               <div className="hidden xl:flex items-center gap-1.5">
                 <span className="text-slate-500 text-[9px]">ORBIT:</span>
@@ -1061,7 +991,6 @@ export default function Scientific3DPlanetaryWorkstation() {
               </div>
             </div>
 
-            {/* Controls */}
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setAutoRotate(!autoRotate)}
@@ -1078,7 +1007,7 @@ export default function Scientific3DPlanetaryWorkstation() {
           </div>
         </div>
 
-        {/* 2E. RIGHT MISSION DATA RAIL (Aerospace Scientific Telemetry Console) */}
+        {/* 2E. RIGHT MISSION DATA RAIL */}
         <div className="w-80 lg:w-96 bg-[#040812] border-l border-white/10 flex flex-col z-30 shrink-0 overflow-y-auto">
           
           {/* Target Header Block */}
@@ -1100,7 +1029,7 @@ export default function Scientific3DPlanetaryWorkstation() {
             </p>
           </div>
 
-          {/* Technical Telemetry Data Matrix */}
+          {/* Telemetry Matrix */}
           <div className="p-4 border-b border-white/10 space-y-3 font-mono text-xs">
             <div className="text-[9px] tracking-widest text-slate-500 uppercase">
               GEODETIC READOUT & OPTICAL PROPERTIES
@@ -1142,17 +1071,15 @@ export default function Scientific3DPlanetaryWorkstation() {
             </div>
           </div>
 
-          {/* TOPOGRAPHIC CROSS-SECTION (LALT Laser Altimeter / TMC Stereo Plot) */}
+          {/* TOPOGRAPHIC CROSS-SECTION (LALT-DEM) */}
           <div className="p-4 border-b border-white/10 space-y-2 font-mono text-xs">
             <div className="flex items-center justify-between text-[9px] tracking-widest text-slate-500 uppercase">
               <span>TOPOGRAPHIC PROFILE (LALT-DEM)</span>
               <span className="text-[#00F0FF]">1:1000 SCALE</span>
             </div>
 
-            {/* Scientific Plotting Instrument Surface */}
             <div className="bg-[#02050B] p-2.5 rounded border border-white/10 space-y-2">
               <div className="h-20 w-full relative flex items-end">
-                {/* Plot Grids */}
                 <div className="absolute inset-0 grid grid-cols-4 grid-rows-3 opacity-15 pointer-events-none">
                   <div className="border-r border-b border-[#00F0FF]" />
                   <div className="border-r border-b border-[#00F0FF]" />
@@ -1162,9 +1089,9 @@ export default function Scientific3DPlanetaryWorkstation() {
                   <div className="border-r border-b border-[#00F0FF]" />
                   <div className="border-r border-b border-[#00F0FF]" />
                   <div className="border-b border-[#00F0FF]" />
-                  <div className="border-r border-[#00F0FF]" />
-                  <div className="border-r border-[#00F0FF]" />
-                  <div className="border-r border-[#00F0FF]" />
+                  <div className="border-r border-b border-[#00F0FF]" />
+                  <div className="border-r border-b border-[#00F0FF]" />
+                  <div className="border-r border-b border-[#00F0FF]" />
                   <div />
                 </div>
 
@@ -1185,7 +1112,6 @@ export default function Scientific3DPlanetaryWorkstation() {
                     stroke="#00F0FF"
                     strokeWidth="1.5"
                   />
-                  {/* Central floor target tick */}
                   <line x1="50" y1="0" x2="50" y2="40" stroke="#FF5C67" strokeWidth="0.8" strokeDasharray="2,2" />
                 </svg>
               </div>
@@ -1198,7 +1124,7 @@ export default function Scientific3DPlanetaryWorkstation() {
             </div>
           </div>
 
-          {/* Quick Target Switcher Rail */}
+          {/* Quick Target Switcher */}
           <div className="p-4 border-b border-white/10 space-y-2 font-mono text-xs">
             <div className="text-[9px] tracking-widest text-slate-500 uppercase">
               QUICK TARGET SELECTION
@@ -1221,7 +1147,7 @@ export default function Scientific3DPlanetaryWorkstation() {
             </div>
           </div>
 
-          {/* Compact Scientific Action Controls */}
+          {/* Actions */}
           <div className="p-4 space-y-2 font-mono text-xs mt-auto">
             <Link
               href="/correspondence"
