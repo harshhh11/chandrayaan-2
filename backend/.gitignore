@@ -1,0 +1,15 @@
+# Credentials & secrets
+.env
+.env.local
+*.env
+
+# Python cache & temp
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Data artifacts
+data/results/
+data/exports/

@@ -67,6 +67,50 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({ mouseX, mouseY, scrollPr
     };
   }, []);
 
+  // Enforce autoplay permission and reliable video playback across all browsers
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+
+    const playVideo = () => {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setVideoLoaded(true))
+          .catch((err) => {
+            console.warn('Video autoplay waiting for gesture:', err);
+          });
+      }
+    };
+
+    if (video.readyState >= 2) {
+      playVideo();
+    } else {
+      video.addEventListener('loadeddata', playVideo);
+      video.addEventListener('canplay', playVideo);
+    }
+
+    const onPlaying = () => setVideoLoaded(true);
+    video.addEventListener('playing', onPlaying);
+
+    const handleInteraction = () => {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+    };
+    window.addEventListener('pointerdown', handleInteraction, { once: true });
+
+    return () => {
+      video.removeEventListener('loadeddata', playVideo);
+      video.removeEventListener('canplay', playVideo);
+      video.removeEventListener('playing', onPlaying);
+      window.removeEventListener('pointerdown', handleInteraction);
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -84,34 +128,36 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({ mouseX, mouseY, scrollPr
         className="absolute inset-0 w-full h-full opacity-60 pointer-events-none mix-blend-screen"
       />
 
-      {/* LAYER 03: Earth Atmospheric Rim & Glow */}
+      {/* LAYER 03: Lunar Horizon Rim & Cyan Accent Glow */}
       <div className="absolute -bottom-[20%] right-[-10%] w-[120vw] h-[70vh] rounded-[100%] bg-gradient-to-t from-[#00C8FF]/12 via-[#004488]/5 to-transparent blur-[80px] pointer-events-none" />
 
-      {/* LAYER 04: Cinematic Satellite Video (High-Res NASA Orbit Footage) */}
-      <video
-        ref={videoRef}
-        src="/media/orbital-satellite.mp4"
-        poster="/media/orbital-satellite-poster.jpg"
-        autoPlay
-        muted
-        loop
-        playsInline
-        onCanPlay={() => setVideoLoaded(true)}
-        className={`absolute inset-0 w-full h-full object-cover object-[65%_center] transition-opacity duration-1000 ${
-          videoLoaded ? 'opacity-90' : 'opacity-0'
-        }`}
-      />
+      {/* LAYER 04: Cinematic Space Visual — Chandrayaan-2 Video Orbiting the Moon */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <video
+          ref={videoRef}
+          src="/media/orbital-satellite.mp4"
+          poster="/media/orbital-satellite-poster.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          onCanPlay={() => setVideoLoaded(true)}
+          className={`absolute inset-0 w-full h-full object-cover object-[92%_center] lg:object-[95%_center] scale-[0.88] sm:scale-[0.86] lg:scale-[0.84] origin-[88%_48%] transition-opacity duration-700 ${
+            videoLoaded ? 'opacity-90' : 'opacity-0'
+          }`}
+        />
 
-      {/* Poster Fallback with slow cinematic drift */}
-      <div
-        className={`absolute inset-0 w-full h-full bg-cover bg-[65%_center] transition-opacity duration-1000 ${
-          videoLoaded ? 'opacity-0' : 'opacity-90'
-        }`}
-        style={{
-          backgroundImage: `url('/media/orbital-satellite-poster.jpg')`,
-          animation: 'orbitalSlowDrift 30s ease-in-out infinite alternate',
-        }}
-      />
+        {/* Poster Fallback with continuous gentle orbital drift */}
+        <div
+          className={`absolute inset-0 w-full h-full bg-cover bg-[92%_center] lg:bg-[95%_center] scale-[0.88] sm:scale-[0.86] lg:scale-[0.84] origin-[88%_48%] transition-opacity duration-700 ${
+            videoLoaded ? 'opacity-0' : 'opacity-90'
+          }`}
+          style={{
+            backgroundImage: `url('/media/orbital-satellite-poster.jpg')`,
+            animation: 'orbitalSlowDrift 16s ease-in-out infinite alternate',
+          }}
+        />
+      </div>
 
       {/* LAYER 05: Dark Left Readability Gradient (guarantees 100% crisp typography contrast without boxes) */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#05070a] via-[#05070a]/80 to-transparent w-full md:w-[62%] pointer-events-none" />

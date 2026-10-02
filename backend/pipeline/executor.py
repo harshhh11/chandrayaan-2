@@ -1,5 +1,6 @@
 import time
 import cv2
+import json
 import numpy as np
 from datetime import datetime
 from pathlib import Path
@@ -10,6 +11,7 @@ from ..models.registration import (
     RegistrationJob, ProcessingStage, StageProgress,
     MatcherType, PreprocessingMethod, GeometricModel
 )
+from ..models.dataset import SunGeometry
 from ..database import db
 from .ingestion import load_and_validate_image
 from .metadata import analyze_sun_geometry
@@ -33,36 +35,64 @@ def log_stage(job: RegistrationJob, stage: ProcessingStage, pct: int, msg: str):
         timestamp=datetime.utcnow().strftime("%H:%M:%S.%f")[:-3]
     )
     job.stages_log.append(entry)
-    db.save_job(job)
+    db.save_job(job.id, "CORRESPONDENCE", job.source_image_id, stage.value.upper(), pct)
 
 def execute_registration_pipeline(job_id: str):
     """
     Executes the complete scientific image correspondence and registration workflow.
+    Integrates with PostgreSQL / SQLite relational tables.
     """
     job = db.get_job(job_id)
     if not job:
         return
 
+    # Look up reference and target dataset records from DB
+    src_id = job.source_image_id if hasattr(job, 'source_image_id') else (job.get('dataset_id') if isinstance(job, dict) else "")
+    ref_id = job.reference_image_id if hasattr(job, 'reference_image_id') else ""
+    src_ds = db.get_dataset(src_id)
+    ref_ds = db.get_dataset(ref_id)
+    
     start_time = time.time()
     try:
         # 1. DATA INGESTION
         log_stage(job, ProcessingStage.INGESTION, 10, "Validating and ingesting source and reference raster files...")
-        src_path = RAW_DIR / f"{job.source_image_id}.png"
-        ref_path = RAW_DIR / f"{job.reference_image_id}.png"
+        
+        src_path = None
+        if src_ds and src_ds.get("file_path") and Path(src_ds["file_path"]).exists():
+            src_path = Path(src_ds["file_path"])
+        else:
+            for ext in [".png", ".jpg", ".jpeg", ".tif", ".tiff"]:
+                p = RAW_DIR / f"{job.source_image_id}{ext}"
+                if p.exists():
+                    src_path = p
+                    break
 
-        if not src_path.exists() or not ref_path.exists():
-            # Check if file has other extension
-            for ext in [".jpg", ".jpeg", ".tif", ".tiff"]:
-                if (RAW_DIR / f"{job.source_image_id}{ext}").exists():
-                    src_path = RAW_DIR / f"{job.source_image_id}{ext}"
-                if (RAW_DIR / f"{job.reference_image_id}{ext}").exists():
-                    ref_path = RAW_DIR / f"{job.reference_image_id}{ext}"
+        ref_path = None
+        if ref_ds and ref_ds.get("file_path") and Path(ref_ds["file_path"]).exists():
+            ref_path = Path(ref_ds["file_path"])
+        else:
+            for ext in [".png", ".jpg", ".jpeg", ".tif", ".tiff"]:
+                p = RAW_DIR / f"{job.reference_image_id}{ext}"
+                if p.exists():
+                    ref_path = p
+                    break
+
+        if not src_path or not ref_path:
+            raise FileNotFoundError(f"Source ({job.source_image_id}) or Reference ({job.reference_image_id}) image file not found on disk.")
 
         src_raw, src_report = load_and_validate_image(str(src_path))
         ref_raw, ref_report = load_and_validate_image(str(ref_path))
 
         # 2. METADATA & SUN ANGLE ANALYSIS
-        sun_analysis = analyze_sun_geometry(job.source_sun_geometry, job.reference_sun_geometry)
+        src_sun = job.source_sun_geometry or SunGeometry(
+            azimuth_deg=src_ds.get("sun_azimuth", 45.0) if src_ds else 45.0,
+            elevation_deg=src_ds.get("sun_elevation", 30.0) if src_ds else 30.0
+        )
+        ref_sun = job.reference_sun_geometry or SunGeometry(
+            azimuth_deg=ref_ds.get("sun_azimuth", 45.0) if ref_ds else 45.0,
+            elevation_deg=ref_ds.get("sun_elevation", 30.0) if ref_ds else 30.0
+        )
+        sun_analysis = analyze_sun_geometry(src_sun, ref_sun)
         log_stage(
             job, ProcessingStage.PREPROCESSING, 22,
             f"Sun Azimuth Δ: {sun_analysis['sun_azimuth_delta_deg']}°, Elevation Δ: {sun_analysis['sun_elevation_delta_deg']}°. Illumination difference: {sun_analysis['illumination_difference_level']}."
@@ -74,11 +104,8 @@ def execute_registration_pipeline(job_id: str):
 
         # 4. GSD & SCALE NORMALIZATION
         log_stage(job, ProcessingStage.SCALE_NORMALIZATION, 35, "Evaluating spatial GSD ratio and executing scale normalization...")
-        # Lookup GSD from datasets or defaults
-        src_ds = db.get_dataset(job.source_image_id)
-        ref_ds = db.get_dataset(job.reference_image_id)
-        src_gsd = src_ds.gsd_m if src_ds else 1.0
-        ref_gsd = ref_ds.gsd_m if ref_ds else 1.0
+        src_gsd = src_ds.get("resolution_m_per_pixel", 1.0) if src_ds else 1.0
+        ref_gsd = ref_ds.get("resolution_m_per_pixel", 1.0) if ref_ds else 1.0
 
         src_scaled, ref_scaled, applied_scale, scale_report = normalize_scale(
             src_pre, ref_pre, src_gsd, ref_gsd, job.config.scale_handling
@@ -102,7 +129,6 @@ def execute_registration_pipeline(job_id: str):
         elif job.config.matcher_type in [MatcherType.LOFTR, MatcherType.SUPERPOINT]:
             matcher = LearnedMatcher(model_name=job.config.matcher_type.value)
         else: # AUTOMATIC
-            # If multi-sensor (e.g. OHRC vs TMC-2 or IIRS) or high illumination diff, choose Cross-Modal
             if job.source_sensor != job.reference_sensor or sun_analysis["illumination_difference_level"] == "HIGH":
                 matcher = CrossModalMatcher()
             else:
@@ -147,7 +173,7 @@ def execute_registration_pipeline(job_id: str):
 
         # 9. EVALUATION & ACCURACY METRICS
         log_stage(job, ProcessingStage.EVALUATION, 95, "Calculating final scientific accuracy metrics and spatial uniformity...")
-        total_time_ms = (time.time() - start_time) * 1000.0
+        total_time_ms = int((time.time() - start_time) * 1000.0)
 
         metrics = evaluate_registration(
             correspondences=correspondences,
@@ -165,9 +191,51 @@ def execute_registration_pipeline(job_id: str):
         job.completed_at = datetime.utcnow().isoformat() + "Z"
         log_stage(job, ProcessingStage.COMPLETED, 100, f"Registration completed successfully in {total_time_ms:.1f}ms. Inliers: {metrics.inlier_count}, RMSE: {metrics.rmse_px}px.")
 
+        # 10. PERSIST FULL SCIENTIFIC CORRESPONDENCE RECORD TO RELATIONAL DATABASE
+        db.save_correspondence_run(
+            run_id=job.id,
+            scene_pair_id=f"PAIR-{job.source_image_id[:8]}-{job.reference_image_id[:8]}",
+            algorithm=f"{job.config.matcher_type.value} + {job.config.geometric_model.value}",
+            parameters=job.config.model_dump(),
+            status="COMPLETED",
+            processing_time_ms=total_time_ms,
+            matches=[c.model_dump() for c in correspondences],
+            registration={
+                "transform_type": job.config.geometric_model.value,
+                "matrix": H_matrix.tolist(),
+                "rmse": metrics.rmse_px,
+                "inlier_count": metrics.inlier_count,
+                "inlier_ratio": round(metrics.inlier_ratio_pct / 100.0, 4),
+                "quality": "HIGH" if metrics.rmse_px < 1.0 else "MODERATE"
+            },
+            sun_analysis={
+                "reference_elevation": ref_sun.elevation_deg,
+                "reference_azimuth": ref_sun.azimuth_deg,
+                "target_elevation": src_sun.elevation_deg,
+                "target_azimuth": src_sun.azimuth_deg,
+                "elevation_delta": sun_analysis["sun_elevation_delta_deg"],
+                "azimuth_delta": sun_analysis["sun_azimuth_delta_deg"],
+                "normalization_method": job.config.preprocessing_method.value
+            },
+            scale_analysis={
+                "reference_resolution": ref_gsd,
+                "target_resolution": src_gsd,
+                "scale_ratio": round(max(ref_gsd, src_gsd) / max(0.01, min(ref_gsd, src_gsd)), 2),
+                "pyramid_levels": 4,
+                "matching_method": "MULTI_SCALE_PYRAMID"
+            },
+            report={
+                "job_id": job.id,
+                "source_image": job.source_image_id,
+                "reference_image": job.reference_image_id,
+                "metrics": metrics.model_dump(),
+                "completed_at": job.completed_at
+            }
+        )
+
     except Exception as e:
         job.status = ProcessingStage.FAILED
         job.error_message = str(e)
         job.completed_at = datetime.utcnow().isoformat() + "Z"
         log_stage(job, ProcessingStage.FAILED, job.progress_pct, f"Pipeline execution failed: {str(e)}")
-        db.save_job(job)
+        db.update_job_progress(job.id, job.progress_pct, "FAILED", str(e))

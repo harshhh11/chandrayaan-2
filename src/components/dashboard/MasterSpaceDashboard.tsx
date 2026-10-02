@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
-  Orbit, Globe, Compass, Activity, ArrowRight, Play, Eye, 
-  Layers, Radio, ShieldAlert, CheckCircle2, ChevronRight,
-  Maximize2, Database, Sliders, RefreshCw, Sparkles, TrendingUp,
-  Crosshair, Sun, Move, Zap, Split, FileText
+  Orbit, Globe, ArrowRight, Layers, CheckCircle2, ChevronRight,
+  Maximize2, Crosshair, Sun, Box, ExternalLink, ZoomIn, ZoomOut, 
+  BarChart3, Activity
 } from 'lucide-react';
 import { EdolusTopNav } from '@/components/layout/EdolusTopNav';
 
@@ -17,46 +16,61 @@ interface AnalyticsData {
   iirs_count: number;
   matches_processed: number;
   avg_correspondence_rate: number;
+  active_analyses: number;
 }
 
 export const MasterSpaceDashboard: React.FC = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData>({
-    images_indexed: 12486,
-    ohrc_count: 4821,
-    tmc_count: 5204,
-    iirs_count: 2461,
-    matches_processed: 8932,
-    avg_correspondence_rate: 91.4
+    images_indexed: 0,
+    ohrc_count: 0,
+    tmc_count: 0,
+    iirs_count: 0,
+    matches_processed: 0,
+    avg_correspondence_rate: 0,
+    active_analyses: 0
   });
 
   const [activeLayers, setActiveLayers] = useState({
     chandrayaan2: true,
-    chandrayaan3: true,
-    isroSatellites: true,
-    spaceDebris: false,
-    groundStations: true
+    ohrcFootprints: true,
+    tmcSwaths: true,
+    iirsCoverage: true,
+    lunarTargets: true
   });
 
-  const [timerSeconds, setTimerSeconds] = useState(754); // 12m 34s
-  const [selectedSensor, setSelectedSensor] = useState<'OHRC' | 'TMC-2' | 'IIRS'>('OHRC');
-  const [isMatching, setIsMatching] = useState(false);
-  const [matchDone, setMatchDone] = useState(true);
-  const [demoVideoOpen, setDemoVideoOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'2D' | '3D'>('3D');
+  const [matchView, setMatchView] = useState<'matches' | 'overlay'>('matches');
+  const [timerSeconds, setTimerSeconds] = useState(698); // 11m 38s
+  const [selectedPyramidScale, setSelectedPyramidScale] = useState<string>('multi');
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+  const [isComparing, setIsComparing] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
-  // Fetch real backend analytics
+  // Fetch real backend analytics from PostgreSQL / SQLite metadata layer
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/analytics/summary')
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    fetch(`${apiBase}/api/analytics/overview`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data) setAnalytics(data);
+        if (data) {
+          setAnalytics({
+            images_indexed: data.images_indexed || 0,
+            ohrc_count: data.ohrc_count || 0,
+            tmc_count: data.tmc_count || 0,
+            iirs_count: data.iirs_count || 0,
+            matches_processed: data.matches_processed || 0,
+            avg_correspondence_rate: data.avg_correspondence_rate || 0,
+            active_analyses: data.active_analyses || 0
+          });
+        }
       })
       .catch(() => {});
   }, []);
 
-  // Orbital countdown timer
+  // Countdown timer for next orbital pass
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimerSeconds(prev => (prev > 0 ? prev - 1 : 754));
+      setTimerSeconds(prev => (prev > 0 ? prev - 1 : 698));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -67,499 +81,778 @@ export const MasterSpaceDashboard: React.FC = () => {
     return `${m}m ${s < 10 ? '0' : ''}${s}s`;
   };
 
-  const handleRunMatch = () => {
-    setIsMatching(true);
-    setMatchDone(false);
-    setTimeout(() => {
-      setIsMatching(false);
-      setMatchDone(true);
-    }, 1200);
-  };
+  // Technical keypoints for Boguslawsky Crater correspondence
+  const keypoints = [
+    { id: 1, x1: 25, y1: 30, x2: 28, y2: 34 },
+    { id: 2, x1: 45, y1: 22, x2: 48, y2: 26 },
+    { id: 3, x1: 70, y1: 35, x2: 73, y2: 39 },
+    { id: 4, x1: 30, y1: 55, x2: 33, y2: 58 },
+    { id: 5, x1: 55, y1: 50, x2: 58, y2: 53 },
+    { id: 6, x1: 78, y1: 60, x2: 81, y2: 64 },
+    { id: 7, x1: 40, y1: 75, x2: 44, y2: 78 },
+    { id: 8, x1: 65, y1: 80, x2: 68, y2: 82 },
+    { id: 9, x1: 85, y1: 72, x2: 88, y2: 74 },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#050A12] text-[#F5F7FA] font-sans antialiased selection:bg-[#4DEBFF] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#030609] text-[#F4F6F8] font-sans antialiased selection:bg-[#38A8FF]/30 selection:text-white overflow-x-hidden">
       
-      {/* Top Persistent Aerospace Navbar */}
+      {/* 1. MASTER SPACECRAFT HUD NAVBAR */}
       <EdolusTopNav />
 
-      {/* Main Content Area */}
-      <main className="pt-20 pb-16 px-4 sm:px-8 lg:px-12 max-w-[1920px] mx-auto space-y-8">
+      {/* Main Workspace Layout with Generous Editorial Breathing Room */}
+      <main className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto space-y-6">
 
         {/* ========================================================
-            1. HERO / PRIMARY SPACE VISUAL SCENE (MATCHING REFERENCE)
+            2. HERO / CINEMATIC LUNAR ORBITAL SCENE
            ======================================================== */}
-        <div className="relative rounded-3xl overflow-hidden border border-[#4DEBFF]/20 bg-gradient-to-b from-[#081322] via-[#060D17] to-[#050A12] p-6 sm:p-12 lg:p-14 shadow-[0_0_60px_rgba(0,184,255,0.15)] min-h-[580px] flex flex-col justify-between select-none">
+        <div className="relative rounded-[14px] overflow-hidden border border-white/[0.08] bg-[#05090D] min-h-[460px] lg:min-h-[500px] flex flex-col justify-between p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.5)] select-none">
           
-          {/* Deep Space Background Layer: Earth Curve with Night Lights + Moon + Nebula */}
+          {/* Photographic Chandrayaan-2 Visual Seamlessly Blended into Deep Space */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {/* Ambient Cosmic Radial Glows */}
-            <div className="absolute top-1/4 right-1/4 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,184,255,0.2)_0%,rgba(47,128,255,0.05)_50%,transparent_75%)] blur-3xl" />
-            <div className="absolute -bottom-40 left-1/3 w-[900px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(0,200,255,0.12)_0%,transparent_70%)] blur-2xl" />
+            <img 
+              src="/hero/chandrayaan2_orbit.jpg" 
+              alt="Chandrayaan-2 in Lunar Orbit" 
+              className="absolute inset-0 w-full h-full object-cover object-[center_right] opacity-60"
+            />
+            {/* Multi-stage dark graphite gradient masks */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#05090D] via-[#05090D]/90 via-42% to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#05090D] via-transparent to-[#05090D]/40" />
 
-            {/* Earth Limb Curvature with Atmosphere Glow & Night Lights (Pure SVG/CSS) */}
-            <div className="absolute -bottom-32 right-0 left-0 h-[380px] opacity-40 mix-blend-screen pointer-events-none">
-              <svg className="w-full h-full" viewBox="0 0 1440 380" preserveAspectRatio="none">
-                <defs>
-                  <radialGradient id="earthGlow" cx="50%" cy="100%" r="60%">
-                    <stop offset="0%" stopColor="#4DEBFF" stopOpacity="0.35" />
-                    <stop offset="40%" stopColor="#0055FF" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-                <path
-                  d="M0,380 Q720,180 1440,380 L1440,380 L0,380 Z"
-                  fill="url(#earthGlow)"
-                />
-                <path
-                  d="M0,380 Q720,180 1440,380"
-                  fill="none"
-                  stroke="#4DEBFF"
-                  strokeWidth="2"
-                  className="opacity-70 shadow-[0_0_15px_#4DEBFF]"
-                />
-              </svg>
-            </div>
-
-            {/* Orbital Trajectory Circles & Golden Markers */}
-            <div className="absolute top-12 right-36 w-[520px] h-[520px] rounded-full border border-dashed border-[#4DEBFF]/25 animate-spin" style={{ animationDuration: '120s' }} />
-            <div className="absolute top-24 right-48 w-[400px] h-[400px] rounded-full border border-[#00B8FF]/15" />
-            
-            {/* Golden Target Pulse on Orbit */}
-            <div className="absolute top-44 right-52 flex items-center justify-center">
-              <div className="w-6 h-6 rounded-full border border-[#FFB547] animate-ping" />
-              <div className="w-2 h-2 rounded-full bg-[#FFB547] absolute" />
-            </div>
+            {/* Faint technical orbital trajectory line */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 1440 600" preserveAspectRatio="none">
+              <path 
+                d="M 220,540 Q 820,180 1420,290" 
+                fill="none" 
+                stroke="#38A8FF" 
+                strokeWidth="1" 
+                strokeDasharray="3 5"
+              />
+              <circle cx="940" cy="272" r="3" fill="#38A8FF" />
+            </svg>
           </div>
 
-          {/* Central-Right Spacecraft Render (Visual Representation of Chandrayaan-2 Orbiter) */}
-          <div className="absolute top-1/2 right-12 lg:right-32 -translate-y-1/2 w-80 sm:w-[460px] h-[340px] pointer-events-none z-10 hidden sm:flex items-center justify-center">
-            {/* Stylized Photorealistic Chandrayaan-2 Spacecraft Component */}
-            <div className="relative w-full h-full flex items-center justify-center animate-pulse" style={{ animationDuration: '6s' }}>
-              
-              {/* Solar Array Left Wing */}
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 w-32 h-44 rounded-lg bg-gradient-to-r from-[#0d223a] via-[#1a3a60] to-[#254f80] border-2 border-[#4DEBFF]/50 shadow-[0_0_30px_rgba(77,235,255,0.25)] -rotate-12 grid grid-cols-4 gap-1 p-1">
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <div key={i} className="bg-[#0b1b2d] border border-[#4DEBFF]/30 rounded-sm" />
-                ))}
-              </div>
-
-              {/* Main Cubical Spacecraft Bus */}
-              <div className="relative w-36 h-36 rounded-2xl bg-gradient-to-br from-[#d9e2ec] via-[#9fb3c8] to-[#486581] border-2 border-white/60 shadow-[0_0_40px_rgba(255,255,255,0.3)] z-20 flex flex-col items-center justify-between p-3 rotate-6">
-                {/* ISRO Insignia & Thermal Blankets */}
-                <div className="flex items-center justify-between w-full">
-                  <div className="w-4 h-4 rounded-full bg-[#FF9933] border border-white" />
-                  <span className="text-[8px] font-mono font-bold text-black bg-white/80 px-1 rounded">ISRO</span>
-                  <div className="w-3 h-3 rounded-full bg-[#138808] border border-white" />
-                </div>
-
-                {/* Optical Payloads Bay (OHRC / TMC-2 Lenses) */}
-                <div className="w-16 h-16 rounded-full bg-black border-2 border-[#4DEBFF] shadow-[0_0_20px_#4DEBFF] flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-[#001f3f] border border-[#00B8FF] flex items-center justify-center">
-                    <div className="w-3 h-3 rounded-full bg-[#4DEBFF] animate-ping" />
-                  </div>
-                </div>
-
-                <span className="text-[7px] font-mono font-bold tracking-wider text-black">CHANDRAYAAN-2</span>
-              </div>
-
-              {/* Solar Array Right Wing */}
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-32 h-44 rounded-lg bg-gradient-to-l from-[#0d223a] via-[#1a3a60] to-[#254f80] border-2 border-[#4DEBFF]/50 shadow-[0_0_30px_rgba(77,235,255,0.25)] -rotate-12 grid grid-cols-4 gap-1 p-1">
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <div key={i} className="bg-[#0b1b2d] border border-[#4DEBFF]/30 rounded-sm" />
-                ))}
-              </div>
-
-              {/* High Gain Dish Antenna */}
-              <div className="absolute -top-6 right-20 w-16 h-16 rounded-full border-2 border-white/70 bg-gradient-to-tr from-gray-700 to-gray-300 rotate-45 shadow-lg flex items-center justify-center">
-                <div className="w-2 h-8 bg-white rotate-45" />
-              </div>
-            </div>
-          </div>
-
-          {/* Top Row Content: Left Status + Right Floating Telemetry Card */}
-          <div className="relative z-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+          {/* Top Row: Hero Headline & Floating Glass Telemetry Cards */}
+          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-start justify-between gap-8">
             
-            {/* Left Hero Title & Description */}
-            <div className="space-y-4 max-w-2xl">
-              {/* Status Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00B8FF]/10 border border-[#4DEBFF]/30 text-[#4DEBFF] text-xs font-mono font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(0,184,255,0.2)]">
-                <span className="w-2 h-2 rounded-full bg-[#4DEBFF] shadow-[0_0_8px_#4DEBFF] animate-pulse" />
+            {/* Left Hero Title & Actions */}
+            <div className="space-y-4 max-w-xl">
+              {/* Technical Status Label */}
+              <div className="inline-flex items-center gap-2 text-[10px] font-tech tracking-[0.16em] text-[#8D98A5] uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
                 <span>LIVE FROM LUNAR ORBIT</span>
               </div>
 
-              {/* Massive Main Heading */}
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white font-sans uppercase leading-[0.95]">
+              {/* Bold Condensed Editorial Headline */}
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight text-[#F4F6F8] uppercase leading-[0.92]">
                 ORBITAL<br />
-                <span className="bg-gradient-to-r from-white via-[#4DEBFF] to-[#2F80FF] bg-clip-text text-transparent">
+                <span className="text-white/95">
                   INTELLIGENCE
                 </span>
               </h1>
 
-              {/* Subtitle */}
-              <p className="text-sm sm:text-base text-white/75 font-sans leading-relaxed max-w-xl font-light">
-                Real-time satellite tracking, analysis and mission insights for a safer, smarter space future.
+              {/* Subtitle in Neutral Muted Gray */}
+              <p className="text-xs sm:text-sm text-[#8D98A5] font-sans leading-relaxed max-w-lg font-normal">
+                Multi-modal, Sun-angle and scale-invariant image correspondence using Chandrayaan-2 optical images (OHRC, TMC-2 and IIRS).
               </p>
 
-              {/* Action Buttons */}
+              {/* Minimal Premium Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
-                  href="/3d"
-                  className="px-6 py-3.5 rounded-full bg-white text-black font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:bg-[#4DEBFF] hover:shadow-[0_0_30px_#4DEBFF] transition-all flex items-center gap-2 group"
+                  href="/correspondence"
+                  className="px-5 py-2.5 rounded-[8px] bg-[#38A8FF] hover:bg-[#2094EC] text-white font-sans text-xs font-semibold tracking-wide transition-colors flex items-center gap-2 group"
                 >
-                  <span>Explore in 3D</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span>Run Correspondence</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
 
                 <Link
-                  href="/correspondence"
-                  className="px-6 py-3.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/20 hover:border-[#4DEBFF]/40 text-white font-mono text-xs tracking-wider uppercase transition-all flex items-center gap-2"
+                  href="/3d"
+                  className="px-5 py-2.5 rounded-[8px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[#F4F6F8] font-sans text-xs font-medium tracking-wide transition-colors flex items-center gap-2"
                 >
-                  <Play className="w-3.5 h-3.5 text-[#4DEBFF] fill-[#4DEBFF]" />
-                  <span>Run Correspondence</span>
+                  <Box className="w-3.5 h-3.5 text-[#8D98A5]" />
+                  <span>Explore in 3D</span>
                 </Link>
               </div>
             </div>
 
-            {/* Top-Right Floating Glass Telemetry Card (Matching Screenshot exactly) */}
-            <div className="w-full sm:w-84 rounded-2xl bg-[#07111F]/80 backdrop-blur-xl border border-white/15 p-4 shadow-2xl flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {/* Realistic Moon Thumbnail */}
-                  <div className="w-11 h-11 rounded-full bg-[#112233] border border-white/20 overflow-hidden shadow-inner flex items-center justify-center relative">
+            {/* Right Side: Floating Glass Telemetry Cards Stack */}
+            <div className="space-y-3 w-full sm:w-76 shrink-0">
+              
+              {/* Card 1: Spacecraft Telemetry Panel */}
+              <div className="glass-telemetry rounded-[12px] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  {/* Moon Sphere Thumbnail */}
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
                     <img 
-                      src="/api/images/DS-OHRC-BOGUSLAWSKY-01.png" 
-                      alt="Moon"
+                      src="/images/moon_globe.png" 
+                      alt="Moon" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
                     />
-                    <Orbit className="w-6 h-6 text-[#4DEBFF]" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-mono font-bold text-white">Chandrayaan-2 (OHRC)</h4>
-                    <span className="text-[10px] font-mono text-[#24D99B] flex items-center gap-1.5 mt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#24D99B] animate-pulse" /> In Orbit
-                    </span>
+                    <h3 className="text-xs font-sans font-semibold text-[#F4F6F8] tracking-wide">
+                      Chandrayaan-2 (OHRC)
+                    </h3>
+                    <div className="flex items-center gap-1.5 text-[10px] font-tech text-[#32D39A] mt-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
+                      <span>In Orbit</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2x2 Telemetry Grid */}
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/[0.07] font-tech text-xs">
+                  <div>
+                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Altitude</span>
+                    <span className="text-[#F4F6F8] font-bold text-sm">100 km</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Inclination</span>
+                    <span className="text-[#F4F6F8] font-bold text-sm">90.0° Polar</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Velocity</span>
+                    <span className="text-[#F4F6F8] font-bold text-sm">1.60 km/s</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Next Pass</span>
+                    <span className="text-[#38A8FF] font-bold text-sm">{formatTimer(timerSeconds)}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Telemetry Key-Value Grid */}
-              <div className="grid grid-cols-2 gap-3 text-[11px] font-mono border-t border-white/10 pt-3">
-                <div>
-                  <span className="text-white/40 block text-[9px] uppercase">Altitude</span>
-                  <span className="text-white font-bold">100 km</span>
+              {/* Card 2: Target Location Coordinates */}
+              <div className="glass-telemetry rounded-[12px] p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-[6px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                    <Crosshair className="w-3.5 h-3.5 text-[#38A8FF]" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-tech font-bold text-[#F4F6F8]">
+                      74.32° S, 53.64° E
+                    </div>
+                    <div className="text-[9.5px] font-tech text-[#8D98A5] tracking-wider uppercase">
+                      BOGUSLAWSKY CRATER
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-white/40 block text-[9px] uppercase">Inclination</span>
-                  <span className="text-white font-bold">90.0° Polar</span>
-                </div>
-                <div>
-                  <span className="text-white/40 block text-[9px] uppercase">Velocity</span>
-                  <span className="text-white font-bold">1.60 km/s</span>
-                </div>
-                <div>
-                  <span className="text-white/40 block text-[9px] uppercase">Next Pass</span>
-                  <span className="text-[#4DEBFF] font-bold">{formatTimer(timerSeconds)}</span>
-                </div>
+                <span className="px-1.5 py-0.5 rounded-[4px] bg-[#38A8FF]/10 border border-[#38A8FF]/20 text-[#38A8FF] text-[9px] font-tech font-medium">
+                  LIVE
+                </span>
               </div>
+
             </div>
 
           </div>
 
-          {/* Bottom Row: Location & Lunar Target Indicator */}
-          <div className="relative z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-white/10 pt-6 mt-8">
-            <div className="flex items-center gap-3 font-mono text-xs text-white/70">
-              <span className="text-white/40">PAYLOADS:</span>
-              <span className="px-2 py-0.5 rounded bg-[#4DEBFF]/10 text-[#4DEBFF] font-bold border border-[#4DEBFF]/30">OHRC 0.25m</span>
-              <span className="px-2 py-0.5 rounded bg-[#2F80FF]/10 text-[#2F80FF] font-bold border border-[#2F80FF]/30">TMC-2 Stereo</span>
-              <span className="px-2 py-0.5 rounded bg-[#FFB547]/10 text-[#FFB547] font-bold border border-[#FFB547]/30">IIRS Spectra</span>
+          {/* Bottom Technical Payload Indicators */}
+          <div className="relative z-10 pt-5 mt-6 border-t border-white/[0.07] flex flex-wrap items-center justify-between gap-4 text-xs font-tech text-[#8D98A5]">
+            <div className="flex items-center gap-3">
+              <span className="text-[#59636E]">PAYLOADS:</span>
+              <span className="text-[#8D98A5]">OHRC 0.25m High-Resolution</span>
+              <span className="text-[#59636E]">•</span>
+              <span className="text-[#8D98A5]">TMC-2 Stereo Terrain</span>
+              <span className="text-[#59636E]">•</span>
+              <span className="text-[#8D98A5]">IIRS Hyperspectral</span>
             </div>
-
-            {/* Interactive Target Coordinates */}
-            <Link
-              href="/map"
-              className="flex items-center gap-2.5 font-mono text-xs text-white/80 hover:text-white transition-colors group self-start sm:self-auto"
-            >
-              <Crosshair className="w-4 h-4 text-[#4DEBFF] animate-spin" style={{ animationDuration: '24s' }} />
-              <span className="text-white font-bold">74.32° S, 53.64° E</span>
-              <span className="text-white/30">•</span>
-              <span className="text-[#4DEBFF] tracking-wider">BOGUSLAWSKY CRATER</span>
-              <span className="px-1.5 py-0.5 rounded bg-[#4DEBFF]/20 text-[#4DEBFF] text-[9px] font-bold">LIVE</span>
-            </Link>
+            <div className="flex items-center gap-2 text-[#59636E]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
+              <span className="text-[#8D98A5]">ISRO Chandrayaan-2 Payload Operations Center</span>
+            </div>
           </div>
 
         </div>
 
         {/* ========================================================
-            2. HORIZONTAL FEATURE STRIP (6 FLOATING AEROSPACE MODULES)
+            3. HORIZONTAL METRICS STRIP (7 MINIMAL GRAPHITE CARDS)
            ======================================================== */}
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-          {[
-            { title: 'Live Tracking', desc: 'Real-time satellite positions', icon: Compass, href: '/map' },
-            { title: '3D Visualization', desc: 'Interactive Earth & orbit view', icon: Globe, href: '/3d' },
-            { title: 'Mission Analytics', desc: 'Performance & insights', icon: Activity, href: '/analytics' },
-            { title: 'Orbital Prediction', desc: 'Future trajectory & pass times', icon: Orbit, href: '/predictions' },
-            { title: 'Conjunction Alerts', desc: 'Collision risk monitoring', icon: ShieldAlert, href: '/alerts', isAlert: true },
-            { title: 'Ground Stations', desc: 'Communication windows', icon: Radio, href: '/mission' },
-          ].map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={idx}
-                href={item.href}
-                className="p-4 rounded-2xl bg-[#07111F]/80 hover:bg-[#0B1726] border border-white/10 hover:border-[#4DEBFF]/40 transition-all duration-300 group flex items-center justify-between shadow-lg"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${
-                    item.isAlert 
-                      ? 'bg-[#FF5C67]/20 border border-[#FF5C67]/30 text-[#FF5C67]' 
-                      : 'bg-[#2F80FF]/15 border border-[#4DEBFF]/30 text-[#4DEBFF]'
-                  }`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-mono font-bold text-white group-hover:text-[#4DEBFF] transition-colors">
-                      {item.title}
-                    </h4>
-                    <p className="text-[10px] text-white/40 truncate max-w-[130px] font-sans">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-[#4DEBFF] group-hover:translate-x-0.5 transition-all" />
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* ========================================================
-            3. MAIN DASHBOARD AREA (3-COLUMN COMPOSITION)
-           ======================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-3">
           
-          {/* LEFT COLUMN: LARGE LIVE ORBITAL VIEW (5 Columns) */}
-          <div className="lg:col-span-5 rounded-3xl bg-[#07111F]/90 border border-white/10 p-5 flex flex-col justify-between relative overflow-hidden min-h-[480px] shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-              <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-[#4DEBFF]" />
-                <h3 className="text-xs font-mono font-bold tracking-widest uppercase text-white">
-                  LIVE ORBITAL VIEW
-                </h3>
+          {/* Card 1: Images Indexed */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-[6px] bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-[#8D98A5] shrink-0">
+              <BarChart3 className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">Images Indexed</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                  {analytics.images_indexed.toLocaleString()}
+                </span>
+                <span className="text-[10px] font-tech text-[#32D39A]">↑ +12%</span>
               </div>
-              <span className="text-[10px] font-mono text-[#24D99B] bg-[#24D99B]/10 px-2 py-0.5 rounded border border-[#24D99B]/30">
-                100 KM CIRCULAR
+            </div>
+          </div>
+
+          {/* Card 2: OHRC Images */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+              <img src="/api/products/ch2_ohr_ncp_20191015T041200_d_img_d18/thumbnail" alt="OHRC" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">OHRC Images</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                {analytics.ohrc_count.toLocaleString()}
               </span>
             </div>
+          </div>
 
-            {/* Interactive Lunar Globe Canvas Simulation */}
-            <div className="relative flex-1 my-4 rounded-2xl bg-[#050A12] border border-white/5 overflow-hidden flex items-center justify-center">
-              {/* Stars Background */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#0B1726_0%,#050A12_100%)]" />
+          {/* Card 3: TMC-2 Images */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+              <img src="/api/products/ch2_tmc_ncn_20200411T093000_d_img_d18/thumbnail" alt="TMC-2" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">TMC-2 Images</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                {analytics.tmc_count.toLocaleString()}
+              </span>
+            </div>
+          </div>
 
-              {/* Realistic Textured Lunar Sphere Simulation */}
-              <div className="relative w-56 h-56 sm:w-72 sm:h-72 rounded-full border border-[#4DEBFF]/30 bg-gradient-to-tr from-[#081322] via-[#102035] to-[#1e395c] shadow-[0_0_60px_rgba(0,184,255,0.25)] overflow-hidden flex items-center justify-center">
-                {/* Surface Crater Formations */}
-                <div className="absolute inset-0 opacity-40">
-                  <div className="w-14 h-14 rounded-full border border-dashed border-white/30 absolute top-8 left-10" />
-                  <div className="w-20 h-20 rounded-full border border-dashed border-white/30 absolute bottom-10 right-8" />
-                  <div className="w-8 h-8 rounded-full bg-black/50 absolute top-20 right-16" />
-                  <div className="w-full h-[1px] bg-[#4DEBFF]/20 absolute top-1/2" />
-                  <div className="h-full w-[1px] bg-[#4DEBFF]/20 absolute left-1/2" />
-                </div>
+          {/* Card 4: IIRS Spectra */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+              <img src="/api/products/ch2_iir_ncn_20210828T144500_d_cub_d18/thumbnail" alt="IIRS" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">IIRS Spectra</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                {analytics.iirs_count.toLocaleString()}
+              </span>
+            </div>
+          </div>
 
-                {/* Animated Polar Orbit Rings */}
-                <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#4DEBFF]/50 rotate-45 scale-110 animate-pulse" />
+          {/* Card 5: Matches Processed */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-[6px] bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-[#8D98A5] shrink-0">
+              <CheckCircle2 className="w-4 h-4 text-[#8D98A5]" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">Matches Processed</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                {analytics.matches_processed.toLocaleString()}
+              </span>
+            </div>
+          </div>
 
-                {/* Real-Time Satellite Pin Marker */}
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-[#07111F]/90 border border-[#4DEBFF] px-2.5 py-1 rounded-full shadow-lg z-20">
-                  <span className="w-2 h-2 rounded-full bg-[#4DEBFF] animate-ping" />
-                  <span className="text-[9px] font-mono text-white font-bold">Chandrayaan-2 (Alt: 100km)</span>
+          {/* Card 6: Avg. Confidence with Radial Progress Ring */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.08)"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#38A8FF"
+                  strokeDasharray="91.4, 100"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">Avg. Confidence</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                {analytics.avg_correspondence_rate}%
+              </span>
+            </div>
+          </div>
+
+          {/* Card 7: Active Analyses */}
+          <div className="p-3.5 rounded-[10px] bg-[#0A1118] border border-white/[0.08] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-[6px] bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-[#8D98A5] shrink-0">
+              <Activity className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-tech text-[#59636E] uppercase tracking-wider block">Active Analyses</span>
+              <span className="text-base font-tech font-bold text-[#F4F6F8]">
+                0{analytics.active_analyses}
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ========================================================
+            4. LOWER THREE-MODULE WORKSPACE (EDITORIAL SCIENTIFIC)
+           ======================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          
+          {/* ------------------------------------------------------
+              MODULE A: LIVE ORBITAL VIEW (4 Columns)
+             ------------------------------------------------------ */}
+          <div className="lg:col-span-4 rounded-[12px] bg-[#0A1118] border border-white/[0.08] p-4 flex flex-col justify-between shadow-xl relative overflow-hidden min-h-[460px]">
+            
+            {/* Header with Minimal Segmented 2D | 3D Toggle */}
+            <div className="flex items-center justify-between mb-3 z-10">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
+                <h3 className="text-xs font-tech font-semibold tracking-wider text-[#F4F6F8] uppercase">
+                  LIVE ORBITAL VIEW
+                </h3>
+                <Link href="/map" title="Expand View">
+                  <ExternalLink className="w-3 h-3 text-[#59636E] hover:text-[#F4F6F8] transition-colors" />
+                </Link>
+              </div>
+
+              {/* Segmented 2D / 3D Switch */}
+              <div className="flex items-center bg-[#05090D] p-0.5 rounded-[6px] border border-white/[0.08] text-[10px] font-tech">
+                <button
+                  onClick={() => setViewMode('2D')}
+                  className={`px-2.5 py-0.5 rounded-[4px] transition-all ${
+                    viewMode === '2D' 
+                      ? 'bg-[#38A8FF] text-white font-medium shadow-none' 
+                      : 'text-[#8D98A5] hover:text-[#F4F6F8]'
+                  }`}
+                >
+                  2D
+                </button>
+                <button
+                  onClick={() => setViewMode('3D')}
+                  className={`px-2.5 py-0.5 rounded-[4px] transition-all ${
+                    viewMode === '3D' 
+                      ? 'bg-[#38A8FF] text-white font-medium shadow-none' 
+                      : 'text-[#8D98A5] hover:text-[#F4F6F8]'
+                  }`}
+                >
+                  3D
+                </button>
+              </div>
+            </div>
+
+            {/* Minimal Lunar Globe Canvas Area */}
+            <div className="relative flex-1 my-1 rounded-[8px] bg-[#030609] border border-white/[0.06] overflow-hidden flex items-center justify-center">
+              
+              {/* Subtle Starry Background */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#071018_0%,#030609_100%)]" />
+
+              {/* Realistic Textured Moon Globe */}
+              <div className="relative w-60 h-60 sm:w-68 sm:h-68 rounded-full overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)] flex items-center justify-center">
+                <img 
+                  src="/images/moon_globe.png" 
+                  alt="Lunar Globe" 
+                  className="w-full h-full object-cover scale-105"
+                />
+
+                {/* Thin Orbital Trajectory Ring */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 300">
+                  <ellipse 
+                    cx="150" 
+                    cy="150" 
+                    rx="125" 
+                    ry="55" 
+                    fill="none" 
+                    stroke="#38A8FF" 
+                    strokeWidth="1" 
+                    strokeDasharray="3 4"
+                    transform="rotate(65 150 150)"
+                    className="opacity-50"
+                  />
+                  <g transform="rotate(65 150 150)">
+                    <circle cx="275" cy="150" r="3" fill="#38A8FF" />
+                  </g>
+                </svg>
+
+                {/* Target Pin Marker (Boguslawsky) */}
+                <div className="absolute bottom-12 right-12 flex items-center gap-2 z-20">
+                  <div className="w-2.5 h-2.5 rounded-full border border-white bg-[#38A8FF]" />
+                  {/* Floating Target Card */}
+                  <div className="px-2 py-1 rounded-[6px] bg-[#0D151E] border border-white/15 text-[9.5px] font-tech shadow-lg flex items-center gap-2">
+                    <div className="w-4 h-4 rounded overflow-hidden border border-white/10 shrink-0">
+                      <img src="/api/products/ch2_ohr_ncp_20191015T041200_d_img_d18/thumbnail" alt="Boguslawsky" className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[#F4F6F8]">Boguslawsky Crater</div>
+                      <div className="text-[8px] text-[#8D98A5]">74.32° S, 53.64° E</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Floating Layer Checklist (Left overlay from reference image) */}
-              <div className="absolute bottom-3 left-3 bg-[#07111F]/95 backdrop-blur-md border border-white/10 rounded-xl p-3 text-[10px] font-mono space-y-1.5 z-20">
+              {/* Overlaid Checkbox Layer Controls */}
+              <div className="absolute top-3 left-3 bg-[#0A1118]/90 backdrop-blur-md border border-white/[0.08] rounded-[8px] p-2.5 text-[9.5px] font-tech space-y-1.5 z-20">
                 {[
                   { key: 'chandrayaan2', label: 'Chandrayaan-2' },
-                  { key: 'chandrayaan3', label: 'Chandrayaan-3' },
-                  { key: 'isroSatellites', label: 'ISRO Satellites' },
-                  { key: 'spaceDebris', label: 'Space Debris' },
-                  { key: 'groundStations', label: 'Ground Stations' },
+                  { key: 'ohrcFootprints', label: 'OHRC Footprints' },
+                  { key: 'tmcSwaths', label: 'TMC-2 Swaths' },
+                  { key: 'iirsCoverage', label: 'IIRS Coverage' },
+                  { key: 'lunarTargets', label: 'Lunar Targets' },
                 ].map(item => (
-                  <label key={item.key} className="flex items-center gap-2 cursor-pointer text-white/70 hover:text-white">
+                  <label key={item.key} className="flex items-center gap-2 cursor-pointer text-[#8D98A5] hover:text-[#F4F6F8] select-none">
                     <input
                       type="checkbox"
                       checked={activeLayers[item.key as keyof typeof activeLayers]}
                       onChange={(e) => setActiveLayers({ ...activeLayers, [item.key]: e.target.checked })}
-                      className="rounded bg-white/10 border-white/20 text-[#00B8FF] focus:ring-0 w-3.5 h-3.5"
+                      className="rounded-[3px] bg-black/40 border-white/20 text-[#38A8FF] focus:ring-0 w-3 h-3"
                     />
                     <span>{item.label}</span>
                   </label>
                 ))}
               </div>
 
-              {/* Zoom & Fullscreen Controls */}
+              {/* Minimal Zoom Tools */}
               <div className="absolute bottom-3 right-3 flex flex-col gap-1 z-20">
-                <Link
-                  href="/3d"
-                  className="p-2 rounded-lg bg-[#07111F]/90 border border-white/10 hover:border-[#4DEBFF]/40 text-white/60 hover:text-white transition-colors"
-                  title="Expand to Fullscreen 3D Lunar Viewer"
+                <button 
+                  onClick={() => setZoomLevel(prev => Math.min(prev + 0.2, 2))}
+                  className="w-6 h-6 rounded-[5px] bg-[#05090D] border border-white/[0.08] flex items-center justify-center text-[#8D98A5] hover:text-[#F4F6F8] transition-colors"
+                  title="Zoom In"
                 >
-                  <Maximize2 className="w-3.5 h-3.5" />
+                  <ZoomIn className="w-3 h-3" />
+                </button>
+                <button 
+                  onClick={() => setZoomLevel(prev => Math.max(prev - 0.2, 0.8))}
+                  className="w-6 h-6 rounded-[5px] bg-[#05090D] border border-white/[0.08] flex items-center justify-center text-[#8D98A5] hover:text-[#F4F6F8] transition-colors"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-3 h-3" />
+                </button>
+                <Link 
+                  href="/3d"
+                  className="w-6 h-6 rounded-[5px] bg-[#05090D] border border-white/[0.08] flex items-center justify-center text-[#8D98A5] hover:text-[#F4F6F8] transition-colors"
+                  title="Fullscreen 3D Viewer"
+                >
+                  <Maximize2 className="w-3 h-3" />
                 </Link>
               </div>
+
             </div>
 
-            <div className="flex items-center justify-between text-[11px] font-mono text-white/50 pt-1">
-              <span>ORBIT: POLAR 90.0°</span>
-              <span className="text-[#4DEBFF]">GROUND TRACK: ACTIVE</span>
-            </div>
           </div>
 
-          {/* CENTER COLUMN: SATELLITE INFORMATION & CORRESPONDENCE (4 Columns) */}
-          <div className="lg:col-span-4 rounded-3xl bg-[#07111F]/90 border border-white/10 p-5 flex flex-col justify-between space-y-4 shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-              <div className="flex items-center gap-2">
-                <Orbit className="w-4 h-4 text-[#4DEBFF]" />
-                <h3 className="text-xs font-mono font-bold tracking-widest uppercase text-white">
-                  SATELLITE INFORMATION
-                </h3>
-              </div>
-              <span className="text-[10px] font-mono text-white/50">
-                ISRO / SAC
-              </span>
-            </div>
-
-            {/* Spacecraft Graphic + ISRO Title Card */}
-            <div className="flex items-center gap-3.5 bg-[#050A12] p-3 rounded-2xl border border-white/5">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-tr from-[#081322] to-[#12243d] border border-[#4DEBFF]/30 p-2 flex items-center justify-center shrink-0">
-                <Orbit className="w-7 h-7 text-[#4DEBFF]" />
-              </div>
-              <div>
-                <h4 className="text-xs font-mono font-bold text-white">Chandrayaan-2 (OHRC)</h4>
-                <div className="flex items-center gap-1.5 text-[10px] text-white/60 mt-0.5">
-                  <span className="w-2.5 h-1.5 bg-[#FF9933] inline-block rounded-xs" />
-                  <span>Indian Space Research Organisation</span>
-                </div>
-                <div className="flex items-center gap-3 text-[9px] font-mono text-white/40 mt-1">
-                  <span>Status: <strong className="text-[#24D99B]">In Orbit</strong></span>
-                  <span>Type: <strong>Orbiter</strong></span>
-                  <span>Launch: <strong>22 Jul 2019</strong></span>
-                </div>
-              </div>
-            </div>
-
-            {/* Telemetry 4-Cell Grid */}
-            <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-mono bg-[#050A12] p-3 rounded-2xl border border-white/5">
-              <div>
-                <span className="text-white/40 block text-[9px]">Altitude</span>
-                <span className="text-white font-bold text-xs">100 km</span>
-              </div>
-              <div>
-                <span className="text-white/40 block text-[9px]">Velocity</span>
-                <span className="text-white font-bold text-xs">1.6 km/s</span>
-              </div>
-              <div>
-                <span className="text-white/40 block text-[9px]">Inclination</span>
-                <span className="text-white font-bold text-xs">90.0°</span>
-              </div>
-              <div>
-                <span className="text-white/40 block text-[9px]">Period</span>
-                <span className="text-white font-bold text-xs">112 min</span>
-              </div>
-            </div>
-
-            {/* Quick Correspondence Match Preview */}
-            <div className="p-3 rounded-2xl bg-[#050A12] border border-white/5 space-y-2">
-              <div className="flex items-center justify-between text-[10px] font-mono">
-                <span className="text-white/60">ACTIVE TIE-POINTS (OHRC ↔ TMC-2):</span>
-                <span className="text-[#24D99B] font-bold">1,284 MATCHES (94.7%)</span>
-              </div>
-              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#2F80FF] via-[#00B8FF] to-[#24D99B] w-[94.7%]" />
-              </div>
-            </div>
-
-            {/* View Full Details Button */}
-            <Link
-              href="/correspondence"
-              className="w-full py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#4DEBFF]/30 text-white/80 hover:text-white text-xs font-mono text-center tracking-wider transition-all block"
-            >
-              View Full Details →
-            </Link>
-          </div>
-
-          {/* RIGHT COLUMN: MISSION INTELLIGENCE STACK (3 Columns) */}
-          <div className="lg:col-span-3 space-y-4 flex flex-col justify-between">
+          {/* ------------------------------------------------------
+              MODULE B: IMAGE CORRESPONDENCE (5 Columns)
+             ------------------------------------------------------ */}
+          <div className="lg:col-span-5 rounded-[12px] bg-[#0A1118] border border-white/[0.08] p-4 flex flex-col justify-between shadow-xl space-y-3">
             
-            {/* Card 1: Next Pass Over India / Byalalu Station */}
-            <div className="rounded-3xl bg-[#07111F]/90 border border-white/10 p-4.5 flex flex-col justify-between shadow-2xl">
-              <div className="flex items-center justify-between text-[10px] font-mono text-white/50">
-                <span className="flex items-center gap-1.5 uppercase">
-                  <Radio className="w-3.5 h-3.5 text-[#4DEBFF]" /> NEXT PASS OVER INDIA
-                </span>
-                <span className="text-[#4DEBFF] font-bold">IDSN</span>
-              </div>
-
-              {/* Glowing Waveform Spectrogram */}
-              <div className="h-12 flex items-center justify-center my-3">
-                <svg className="w-full h-full text-[#4DEBFF]" viewBox="0 0 100 25" preserveAspectRatio="none">
-                  <path
-                    d="M0,12 Q15,0 30,12 T60,12 T90,12 T100,12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M0,12 Q15,24 30,12 T60,12 T90,12 T100,12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeDasharray="2 2"
-                    className="opacity-30"
-                  />
-                </svg>
-              </div>
-
-              <div className="flex items-baseline justify-between font-mono">
-                <span className="text-xl font-bold text-white">{formatTimer(timerSeconds)}</span>
-                <span className="text-[9px] text-white/40">AOS • 03:32:14 IST</span>
-              </div>
-            </div>
-
-            {/* Card 2: Collision & Sun Angle Risk */}
-            <div className="rounded-3xl bg-[#07111F]/90 border border-white/10 p-4.5 flex flex-col justify-between shadow-2xl">
-              <div className="flex items-center justify-between text-[10px] font-mono text-white/50">
-                <span className="flex items-center gap-1.5 uppercase">
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#FFB547]" /> COLLISION RISK
-                </span>
-                <span className="text-[#FFB547] font-bold">MONITORED</span>
-              </div>
-
-              <div className="flex items-center gap-4 my-2">
-                <div className="w-12 h-12 rounded-full border-3 border-dashed border-[#FFB547] flex items-center justify-center font-mono font-bold text-base text-[#FFB547]">
-                  2
-                </div>
-                <div className="text-xs font-mono">
-                  <div className="text-white font-bold">Medium Risk Objects</div>
-                  <Link href="/alerts" className="text-[#4DEBFF] hover:underline text-[10px] mt-0.5 block">
-                    View Details →
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: System Status */}
-            <div className="rounded-3xl bg-[#07111F]/90 border border-[#24D99B]/30 p-4 flex items-center justify-between text-xs font-mono text-[#24D99B] shadow-2xl">
+            {/* Header + Minimal New Analysis CTA */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#24D99B] animate-ping" />
-                <span className="font-bold">SYSTEM STATUS</span>
+                <Box className="w-3.5 h-3.5 text-[#38A8FF]" />
+                <h3 className="text-xs font-tech font-semibold tracking-wider text-[#F4F6F8] uppercase">
+                  IMAGE CORRESPONDENCE
+                </h3>
+                <Link href="/correspondence" title="Open Workspace">
+                  <ExternalLink className="w-3 h-3 text-[#59636E] hover:text-[#F4F6F8] transition-colors" />
+                </Link>
               </div>
-              <span className="text-[10px] text-white/60">All systems operational</span>
+
+              <Link
+                href="/correspondence"
+                className="px-3 py-1 rounded-[6px] bg-[#0D151E] hover:bg-[#121D2A] border border-white/[0.08] text-[#F4F6F8] text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+              >
+                <span>New Analysis</span>
+                <ArrowRight className="w-3 h-3 text-[#38A8FF]" />
+              </Link>
+            </div>
+
+            {/* Technical Subheader: Sensor Labels and Resolutions */}
+            <div className="grid grid-cols-2 gap-4 text-xs font-tech pt-1">
+              <div className="flex items-center justify-between border-b border-white/[0.07] pb-1">
+                <span className="font-medium text-[#F4F6F8]">OHRC (Reference)</span>
+                <span className="text-[#8D98A5] text-[11px]">0.25 m/px</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-white/[0.07] pb-1">
+                <span className="font-medium text-[#F4F6F8]">TMC-2 (Target)</span>
+                <span className="text-[#E7A93B] text-[11px]">5.00 m/px</span>
+              </div>
+            </div>
+
+            {/* Scientific Dual-Canvas Viewport with Thin Technical Tie-Lines */}
+            <div className="relative rounded-[8px] overflow-hidden bg-[#030609] border border-white/[0.06] p-2">
+              <div className="grid grid-cols-2 gap-3 relative h-48 sm:h-52">
+                
+                {/* Left: OHRC Reference Image */}
+                <div className="relative rounded-[6px] overflow-hidden border border-white/[0.08] h-full">
+                  <img 
+                    src="/api/products/ch2_ohr_ncp_20191015T041200_d_img_d18/preview" 
+                    alt="OHRC Reference" 
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Subtle Cyan Keypoints */}
+                  {matchView !== 'overlay' && keypoints.map((pt) => (
+                    <div 
+                      key={`l-${pt.id}`}
+                      onMouseEnter={() => setHoveredPoint(pt.id)}
+                      onMouseLeave={() => setHoveredPoint(null)}
+                      style={{ top: `${pt.y1}%`, left: `${pt.x1}%` }}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full cursor-pointer transition-transform ${
+                        hoveredPoint === pt.id 
+                          ? 'bg-white ring-2 ring-[#62DDF5] scale-125 z-30' 
+                          : 'bg-[#62DDF5]'
+                      }`}
+                    />
+                  ))}
+                  <span className="absolute bottom-1.5 left-2 px-1.5 py-0.5 rounded-[4px] bg-black/75 text-[8.5px] font-tech text-[#8D98A5]">
+                    SRC • LOW SUN (28.4°)
+                  </span>
+                </div>
+
+                {/* Right: TMC-2 Target Image */}
+                <div className="relative rounded-[6px] overflow-hidden border border-white/[0.08] h-full">
+                  <img 
+                    src="/api/products/ch2_tmc_ncn_20200411T093000_d_img_d18/preview" 
+                    alt="TMC-2 Target" 
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Subtle Amber Keypoints */}
+                  {matchView !== 'overlay' && keypoints.map((pt) => (
+                    <div 
+                      key={`r-${pt.id}`}
+                      onMouseEnter={() => setHoveredPoint(pt.id)}
+                      onMouseLeave={() => setHoveredPoint(null)}
+                      style={{ top: `${pt.y2}%`, left: `${pt.x2}%` }}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full cursor-pointer transition-transform ${
+                        hoveredPoint === pt.id 
+                          ? 'bg-white ring-2 ring-[#E7A93B] scale-125 z-30' 
+                          : 'bg-[#E7A93B]'
+                      }`}
+                    />
+                  ))}
+                  <span className="absolute bottom-1.5 right-2 px-1.5 py-0.5 rounded-[4px] bg-black/75 text-[8.5px] font-tech text-[#8D98A5]">
+                    TGT • HIGH SUN (54.1°)
+                  </span>
+                </div>
+
+                {/* Thin Technical Correspondence Tie-Lines */}
+                {matchView === 'matches' && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
+                    {keypoints.map((pt) => {
+                      const isHover = hoveredPoint === pt.id;
+                      const startX = pt.x1 * 0.48;
+                      const startY = pt.y1;
+                      const endX = 52 + (pt.x2 * 0.48);
+                      const endY = pt.y2;
+
+                      return (
+                        <line
+                          key={`line-${pt.id}`}
+                          x1={`${startX}%`}
+                          y1={`${startY}%`}
+                          x2={`${endX}%`}
+                          y2={`${endY}%`}
+                          stroke={isHover ? '#FFFFFF' : 'rgba(98, 221, 245, 0.45)'}
+                          strokeWidth={isHover ? '1.5' : '1'}
+                          strokeDasharray={isHover ? 'none' : '2 3'}
+                        />
+                      );
+                    })}
+                  </svg>
+                )}
+
+              </div>
+            </div>
+
+            {/* Scientific Metrics Bar */}
+            <div className="grid grid-cols-5 gap-2 text-center font-tech py-2 bg-[#05090D] rounded-[8px] border border-white/[0.06]">
+              <div>
+                <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Matched</span>
+                <span className="text-[#F4F6F8] font-bold text-xs sm:text-sm">1,284</span>
+              </div>
+              <div>
+                <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Confidence</span>
+                <span className="text-[#32D39A] font-bold text-xs sm:text-sm">94.7%</span>
+              </div>
+              <div>
+                <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Scale Ratio</span>
+                <span className="text-[#F4F6F8] font-bold text-xs sm:text-sm">3.2×</span>
+              </div>
+              <div>
+                <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Sun Δ</span>
+                <span className="text-[#E7A93B] font-bold text-xs sm:text-sm">18.4°</span>
+              </div>
+              <div>
+                <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Error</span>
+                <span className="text-[#F4F6F8] font-bold text-xs sm:text-sm">0.42 px</span>
+              </div>
+            </div>
+
+            {/* Bottom Actions: Compare & Minimal Switch */}
+            <div className="flex items-center justify-between pt-1">
+              <button
+                onClick={() => setIsComparing(!isComparing)}
+                className="px-3.5 py-1.5 rounded-[6px] bg-[#38A8FF] hover:bg-[#2094EC] text-white text-xs font-sans font-medium transition-colors"
+              >
+                {isComparing ? 'Reset View' : 'Compare'}
+              </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-tech text-[#59636E]">Mode:</span>
+                <div className="flex items-center bg-[#05090D] p-0.5 rounded-[6px] border border-white/[0.08] text-[10px] font-tech">
+                  <button
+                    onClick={() => setMatchView('matches')}
+                    className={`px-2.5 py-0.5 rounded-[4px] transition-all ${
+                      matchView === 'matches'
+                        ? 'bg-[#38A8FF] text-white font-medium'
+                        : 'text-[#8D98A5] hover:text-[#F4F6F8]'
+                    }`}
+                  >
+                    Matches
+                  </button>
+                  <button
+                    onClick={() => setMatchView('overlay')}
+                    className={`px-2.5 py-0.5 rounded-[4px] transition-all ${
+                      matchView === 'overlay'
+                        ? 'bg-[#38A8FF] text-white font-medium'
+                        : 'text-[#8D98A5] hover:text-[#F4F6F8]'
+                    }`}
+                  >
+                    Overlay
+                  </button>
+                </div>
+              </div>
+
+              <Link
+                href="/correspondence"
+                className="p-1 rounded-[6px] bg-white/[0.03] hover:bg-white/[0.08] text-[#8D98A5] hover:text-[#F4F6F8] transition-colors"
+                title="Open in Correspondence Engine"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+          </div>
+
+          {/* ------------------------------------------------------
+              MODULE C: RIGHT STACK (SUN ANGLE + SCALE INVARIANCE) (3 Columns)
+             ------------------------------------------------------ */}
+          <div className="lg:col-span-3 flex flex-col justify-between gap-4">
+            
+            {/* Top Stack Card: SUN-ANGLE ANALYSIS */}
+            <div className="rounded-[12px] bg-[#0A1118] border border-white/[0.08] p-4 shadow-xl flex-1 flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.07]">
+                <div className="flex items-center gap-1.5">
+                  <Sun className="w-3.5 h-3.5 text-[#E7A93B]" />
+                  <h3 className="text-xs font-tech font-semibold tracking-wider text-[#F4F6F8] uppercase">
+                    SUN-ANGLE ANALYSIS
+                  </h3>
+                </div>
+                <Link href="/analytics" title="Detailed Analysis">
+                  <ChevronRight className="w-3.5 h-3.5 text-[#59636E] hover:text-[#F4F6F8]" />
+                </Link>
+              </div>
+
+              {/* Solar Geometry Comparison */}
+              <div className="grid grid-cols-2 gap-2 my-2 font-tech text-[10px]">
+                
+                {/* Reference Sun */}
+                <div className="p-2 rounded-[6px] bg-[#030609] border border-white/[0.06] space-y-1.5">
+                  <span className="text-[#59636E] block text-[9px] uppercase">Reference Sun</span>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[#F4F6F8] font-bold text-xs">32.4°</span>
+                    <span className="text-[#59636E] text-[9px]">Elev</span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[#F4F6F8] font-bold text-xs">138.2°</span>
+                    <span className="text-[#59636E] text-[9px]">Azim</span>
+                  </div>
+                  {/* Solar Dial Graphic */}
+                  <div className="pt-1 flex items-center justify-center">
+                    <div className="relative w-8 h-8 rounded-full border border-dashed border-white/20 flex items-center justify-center">
+                      <div className="absolute w-1.5 h-1.5 rounded-full bg-[#E7A93B] top-0 right-1" />
+                      <div className="w-1 h-1 rounded-full bg-white/30" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Target Sun */}
+                <div className="p-2 rounded-[6px] bg-[#030609] border border-white/[0.06] space-y-1.5">
+                  <span className="text-[#59636E] block text-[9px] uppercase">Target Sun</span>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[#F4F6F8] font-bold text-xs">51.8°</span>
+                    <span className="text-[#59636E] text-[9px]">Elev</span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[#F4F6F8] font-bold text-xs">221.7°</span>
+                    <span className="text-[#59636E] text-[9px]">Azim</span>
+                  </div>
+                  {/* Solar Dial Graphic */}
+                  <div className="pt-1 flex items-center justify-center">
+                    <div className="relative w-8 h-8 rounded-full border border-dashed border-white/20 flex items-center justify-center">
+                      <div className="absolute w-1.5 h-1.5 rounded-full bg-[#38A8FF] bottom-0.5 left-1" />
+                      <div className="w-1 h-1 rounded-full bg-white/30" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Delta Angle Badge in Amber */}
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-[6px] bg-[#05090D] border border-white/[0.06] text-[#E7A93B] text-[10px] font-tech">
+                <span className="text-[#8D98A5]">ILLUMINATION DELTA</span>
+                <span className="font-bold">Δ 19.4°</span>
+              </div>
+            </div>
+
+            {/* Bottom Stack Card: SCALE-INVARIANT MATCHING */}
+            <div className="rounded-[12px] bg-[#0A1118] border border-white/[0.08] p-4 shadow-xl flex-1 flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.07]">
+                <div className="flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#38A8FF]" />
+                  <h3 className="text-xs font-tech font-semibold tracking-wider text-[#F4F6F8] uppercase">
+                    SCALE-INVARIANT MATCHING
+                  </h3>
+                </div>
+                <Link href="/analytics" title="Detailed Analysis">
+                  <ChevronRight className="w-3.5 h-3.5 text-[#59636E] hover:text-[#F4F6F8]" />
+                </Link>
+              </div>
+
+              {/* Scale Values Grid */}
+              <div className="grid grid-cols-3 gap-2 my-2 text-center font-tech">
+                <div className="p-1.5 rounded-[6px] bg-[#030609] border border-white/[0.06]">
+                  <span className="text-[8.5px] text-[#59636E] block uppercase">Reference</span>
+                  <span className="text-[#F4F6F8] font-bold text-[11px]">0.25 m/px</span>
+                </div>
+                <div className="p-1.5 rounded-[6px] bg-[#030609] border border-white/[0.06]">
+                  <span className="text-[8.5px] text-[#59636E] block uppercase">Target</span>
+                  <span className="text-[#F4F6F8] font-bold text-[11px]">1.20 m/px</span>
+                </div>
+                <div className="p-1.5 rounded-[6px] bg-[#030609] border border-white/[0.06]">
+                  <span className="text-[8.5px] text-[#59636E] block uppercase">Ratio</span>
+                  <span className="text-[#38A8FF] font-bold text-[11px]">4.8×</span>
+                </div>
+              </div>
+
+              {/* Multi-Scale Pyramid Preview */}
+              <div>
+                <span className="text-[9px] font-tech text-[#59636E] block mb-1.5 uppercase tracking-wider">
+                  SCALE PYRAMID LEVEL
+                </span>
+                <div className="grid grid-cols-5 gap-1.5 text-center font-tech text-[9px]">
+                  {['1.0x', '0.75x', '0.50x', '0.25x', 'Multi-Scale'].map((lvl) => {
+                    const isMulti = lvl === 'Multi-Scale';
+                    const isSelected = selectedPyramidScale === lvl.toLowerCase() || (isMulti && selectedPyramidScale === 'multi');
+                    return (
+                      <button
+                        key={lvl}
+                        onClick={() => setSelectedPyramidScale(lvl.toLowerCase())}
+                        className={`p-1 rounded-[5px] border transition-all ${
+                          isSelected
+                            ? 'bg-[#0D151E] border-[#38A8FF] text-[#38A8FF] font-medium'
+                            : 'bg-[#030609] border-white/[0.06] text-[#8D98A5] hover:border-white/20'
+                        }`}
+                      >
+                        <div className="w-full h-4 rounded-[3px] overflow-hidden mb-1 border border-white/10 opacity-75">
+                          <img 
+                            src="/api/products/ch2_ohr_ncp_20191015T041200_d_img_d18/thumbnail" 
+                            alt={lvl} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <span className="block truncate">{lvl}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
 
           </div>
@@ -567,6 +860,7 @@ export const MasterSpaceDashboard: React.FC = () => {
         </div>
 
       </main>
+
     </div>
   );
 };

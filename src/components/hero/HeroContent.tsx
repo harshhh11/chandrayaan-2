@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import { spaceAudio } from '@/audio/spaceAudio';
 
 interface HeroContentProps {
@@ -33,12 +35,12 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
       {/* ========================================================
           1. LEFT STATUS BLOCK (BELOW NAVBAR)
           ======================================================== */}
-      <div className="absolute top-24 sm:top-28 left-6 sm:left-12 lg:left-16 flex flex-col gap-1 font-mono text-[9px] sm:text-[10px] tracking-[0.24em] uppercase text-white/70">
+      <div className="absolute top-20 sm:top-24 left-6 sm:left-12 lg:left-16 flex flex-col gap-1 font-tech text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-[#8D98A5]">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
-          <span className="font-semibold text-white/90">SYSTEM ONLINE // NOMINAL</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
+          <span className="font-semibold text-[#F4F6F8]">SYSTEM ONLINE // NOMINAL</span>
         </div>
-        <div className="text-white/45 pl-3.5 tracking-[0.2em] font-light text-[8px] sm:text-[9px]">
+        <div className="text-[#59636E] pl-3.5 tracking-[0.16em] font-light text-[8px] sm:text-[9px]">
           {utcTime || '2026-09-30 11:42:17 UTC'}
         </div>
       </div>
@@ -48,35 +50,56 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           ======================================================== */}
       <div
         style={{ transform: `translate3d(${textShiftX}px, ${textShiftY}px, 0)` }}
-        className="absolute bottom-20 sm:bottom-24 left-6 sm:left-12 lg:left-16 max-w-2xl flex flex-col gap-5 sm:gap-6"
+        className="absolute bottom-16 sm:bottom-20 left-6 sm:left-12 lg:left-16 max-w-2xl flex flex-col gap-4 sm:gap-5"
       >
         {/* Large Editorial Title */}
-        <h1 className="text-[52px] sm:text-[72px] md:text-[88px] lg:text-[108px] font-black tracking-[-0.04em] text-[#F5F7FA] uppercase leading-[0.88]">
+        <h1 className="text-[52px] sm:text-[72px] md:text-[88px] lg:text-[104px] font-display font-extrabold tracking-[-0.035em] text-[#F4F6F8] uppercase leading-[0.88]">
           ORBITAL<br />
           INTELLIGENCE
         </h1>
 
         {/* Subtitle */}
-        <p className="text-xs sm:text-[13px] text-white/70 font-sans tracking-wide max-w-[520px] leading-relaxed uppercase">
+        <p className="text-xs sm:text-[13px] text-[#8D98A5] font-sans tracking-wide max-w-[520px] leading-relaxed uppercase">
           A REAL-TIME AUTONOMOUS PLATFORM FOR MONITORING, ANALYSIS, PREDICTION AND OPERATIONAL INTELLIGENCE.
         </p>
 
+        {/* CTAs directly on Hero */}
+        <div className="flex items-center gap-3 pt-1 pointer-events-auto">
+          <Link
+            href="/dashboard"
+            onClick={() => spaceAudio.playTelemetryClick()}
+            className="px-6 py-3 rounded-[8px] bg-[#38A8FF] hover:bg-[#2094EC] text-white font-tech text-xs tracking-wider uppercase font-semibold transition-colors flex items-center gap-2"
+          >
+            <span>ENTER PLATFORM</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
+          <a
+            href="#system"
+            onClick={() => spaceAudio.playTelemetryClick()}
+            className="px-5 py-3 rounded-[8px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[#F4F6F8] font-tech text-xs tracking-wider uppercase transition-colors flex items-center gap-2"
+          >
+            <span>EXPLORE SYSTEM</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#8D98A5]" />
+          </a>
+        </div>
+
         {/* Micro Technical Metrics */}
-        <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-1 font-mono text-[9px] sm:text-[10px] tracking-[0.2em] text-white/45 uppercase border-t border-white/10">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-2 font-tech text-[9px] sm:text-[10px] tracking-[0.16em] text-[#59636E] uppercase border-t border-white/[0.08]">
           <div>
-            LATENCY // <span className="text-white/85">&lt;24MS</span>
+            LATENCY // <span className="text-[#F4F6F8]">&lt;24MS</span>
           </div>
-          <span className="text-white/20">|</span>
+          <span className="text-white/10">|</span>
           <div>
-            SYNC // <span className="text-white/85">REAL-TIME</span>
+            SYNC // <span className="text-[#F4F6F8]">REAL-TIME</span>
           </div>
-          <span className="text-white/20">|</span>
+          <span className="text-white/10">|</span>
           <div>
-            MODEL // <span className="text-white/85">ORBITAL MESH</span>
+            MODEL // <span className="text-[#F4F6F8]">CHANDRAYAAN-2</span>
           </div>
-          <span className="text-white/20">|</span>
+          <span className="text-white/10">|</span>
           <div>
-            STATUS // <span className="text-emerald-400">NOMINAL</span>
+            STATUS // <span className="text-[#32D39A]">NOMINAL</span>
           </div>
         </div>
       </div>
@@ -86,37 +109,37 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           ======================================================== */}
       <div
         style={{ transform: `translate3d(${labelShiftX}px, ${labelShiftY}px, 0)` }}
-        className="absolute inset-0 pointer-events-none font-mono"
+        className="absolute inset-0 pointer-events-none font-tech"
       >
         {/* Callout 1: AI INTELLIGENCE CORE */}
         <div className="absolute top-[40%] right-[10%] sm:right-[18%] hidden md:flex items-center gap-2.5 opacity-80">
           <div className="w-1.5 h-1.5 rounded-full border border-white/60" />
-          <div className="h-[1px] w-10 bg-white/30" />
+          <div className="h-[1px] w-10 bg-white/20" />
           <div className="flex flex-col text-left">
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.22em] text-white">AI INTELLIGENCE CORE</span>
-            <span className="text-[8px] sm:text-[9px] tracking-[0.16em] text-[#00C8FF]">REAL-TIME INFERENCE</span>
+            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#F4F6F8]">AI INTELLIGENCE CORE</span>
+            <span className="text-[8px] sm:text-[9px] tracking-[0.14em] text-[#38A8FF]">REAL-TIME INFERENCE</span>
           </div>
-          <div className="h-[1px] w-6 bg-white/30" />
-          <div className="w-1.5 h-1.5 rounded-full bg-[#00C8FF] shadow-[0_0_6px_#00C8FF]" />
+          <div className="h-[1px] w-6 bg-white/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#38A8FF]" />
         </div>
 
         {/* Callout 2: SOLAR ARRAY MATRIX */}
         <div className="absolute top-[26%] right-[30%] sm:right-[38%] hidden lg:flex items-center gap-2.5 opacity-75">
           <div className="flex flex-col text-right">
-            <span className="text-[10px] font-bold tracking-[0.22em] text-white">SOLAR ARRAY MATRIX</span>
-            <span className="text-[8px] tracking-[0.14em] text-white/50">PHOTOVOLTAIC CELLS</span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-[#F4F6F8]">SOLAR ARRAY MATRIX</span>
+            <span className="text-[8px] tracking-[0.14em] text-[#8D98A5]">PHOTOVOLTAIC CELLS</span>
           </div>
-          <div className="h-[1px] w-12 bg-white/30" />
-          <div className="w-1.5 h-1.5 rounded-full bg-white/80" />
+          <div className="h-[1px] w-12 bg-white/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
         </div>
 
         {/* Callout 3: ORBITAL TELEMETRY NODE */}
         <div className="absolute top-[64%] right-[22%] sm:right-[26%] hidden md:flex items-center gap-2.5 opacity-70">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#00C8FF]/80" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#38A8FF]" />
           <div className="h-[1px] w-8 bg-white/20" />
           <div className="flex flex-col text-left">
-            <span className="text-[9px] font-bold tracking-[0.2em] text-white">ORBITAL TELEMETRY NODE</span>
-            <span className="text-[8px] tracking-[0.14em] text-white/45">LEO MESH // 540.4 KM</span>
+            <span className="text-[9px] font-bold tracking-[0.18em] text-[#F4F6F8]">ORBITAL TELEMETRY NODE</span>
+            <span className="text-[8px] tracking-[0.14em] text-[#8D98A5]">LLO POLAR // 100.0 KM</span>
           </div>
         </div>
       </div>
@@ -124,35 +147,27 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
       {/* ========================================================
           4. RIGHT SIDE TELEMETRY BLOCK
           ======================================================== */}
-      <div className="absolute top-28 sm:top-32 right-6 sm:right-12 hidden sm:flex flex-col items-end gap-1 font-mono text-[9px] sm:text-[10px] tracking-[0.2em] text-white/50">
+      <div className="absolute top-24 sm:top-28 right-6 sm:right-12 hidden sm:flex flex-col items-end gap-1 font-tech text-[9px] sm:text-[10px] tracking-[0.18em] text-[#59636E]">
         <div className="flex items-center gap-2">
-          <span className="text-[#00C8FF] font-bold text-xs">+</span>
-          <div className="h-[1px] w-8 bg-white/20" />
-          <span className="text-white/80 tracking-[0.22em]">LEO / 540.4 KM</span>
+          <span className="text-[#38A8FF] font-bold text-xs">+</span>
+          <div className="h-[1px] w-8 bg-white/10" />
+          <span className="text-[#F4F6F8] tracking-[0.2em]">LLO / 100.0 KM</span>
         </div>
-        <div className="text-sky-300/80 tracking-[0.18em]">SYNC / 0.024 MS</div>
-        <div className="text-emerald-400/80 tracking-[0.18em]">VEL / 7.66 KM/S</div>
+        <div className="text-[#8D98A5] tracking-[0.16em]">SYNC / 0.024 MS</div>
+        <div className="text-[#32D39A] tracking-[0.16em]">VEL / 1.63 KM/S</div>
       </div>
 
       {/* ========================================================
           5. BOTTOM UI (LEFT METRICS & RIGHT SCROLL INDICATOR)
           ======================================================== */}
-      {/* Bottom Left */}
-      <div className="absolute bottom-6 sm:bottom-8 left-6 sm:left-12 lg:left-16 flex items-center gap-4 font-mono text-[9px] sm:text-[10px] tracking-[0.22em] text-white/40 uppercase">
-        <div>LATENCY // &lt;24MS</div>
-        <span className="text-white/20">•</span>
-        <div>GLOBAL COVERAGE // ACTIVE</div>
-      </div>
-
-      {/* Bottom Right */}
-      <div className="absolute bottom-6 sm:bottom-8 right-6 sm:right-12 z-30 pointer-events-auto">
+      <div className="absolute bottom-5 sm:bottom-6 right-6 sm:right-12 z-30 pointer-events-auto">
         <a
           href="#system"
           onClick={() => spaceAudio.playTelemetryClick()}
-          className="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] uppercase text-white/50 hover:text-white transition-colors duration-300 group"
+          className="flex items-center gap-2 font-tech text-[10px] tracking-[0.2em] uppercase text-[#8D98A5] hover:text-[#F4F6F8] transition-colors duration-200 group"
         >
           <span>SCROLL TO EXPLORE</span>
-          <span className="text-[#00C8FF] group-hover:translate-y-0.5 transition-transform">↓</span>
+          <span className="text-[#38A8FF] group-hover:translate-y-0.5 transition-transform">↓</span>
         </a>
       </div>
     </div>
