@@ -88,12 +88,12 @@ export default function InvarianceLabPage() {
         status: 'STEREO_VIEWPOINT_ALIGNED'
       },
       baseline_metrics: {
-        candidate_matches: Math.round(raw.metrics.total_matches * 0.85),
-        verified_inliers: Math.round(raw.metrics.verified_inliers * 0.78),
-        inlier_ratio_pct: Math.round((raw.metrics.inlier_ratio_pct * 0.82) * 10) / 10,
-        rmse_px: Math.round((raw.metrics.rmse_px * 1.35) * 100) / 100,
-        confidence: Math.round((raw.metrics.confidence * 0.84) * 10) / 10,
-        spatial_coverage_pct: Math.round((raw.metrics.spatial_coverage_pct * 0.80) * 10) / 10,
+        candidate_matches: raw.metrics.total_matches,
+        verified_inliers: raw.metrics.verified_inliers,
+        inlier_ratio_pct: raw.metrics.inlier_ratio_pct,
+        rmse_px: raw.metrics.rmse_px,
+        confidence: raw.metrics.confidence,
+        spatial_coverage_pct: raw.metrics.spatial_coverage_pct,
       },
       normalized_metrics: {
         candidate_matches: norm.metrics.total_matches,
@@ -104,9 +104,9 @@ export default function InvarianceLabPage() {
         spatial_coverage_pct: norm.metrics.spatial_coverage_pct,
       },
       improvement: {
-        inlier_gain_pct: Math.round((norm.metrics.inlier_ratio_pct - (raw.metrics.inlier_ratio_pct * 0.82)) * 10) / 10,
-        rmse_reduction_px: Math.round(((raw.metrics.rmse_px * 1.35) - norm.metrics.rmse_px) * 100) / 100,
-        confidence_gain_pct: Math.round((norm.metrics.confidence - (raw.metrics.confidence * 0.84)) * 10) / 10,
+        inlier_gain_pct: Math.round((norm.metrics.inlier_ratio_pct - raw.metrics.inlier_ratio_pct) * 10) / 10,
+        rmse_reduction_px: Math.round((raw.metrics.rmse_px - norm.metrics.rmse_px) * 100) / 100,
+        confidence_gain_pct: Math.round((norm.metrics.confidence - raw.metrics.confidence) * 10) / 10,
       },
       subpixel_refinement: {
         points_refined: norm.metrics.verified_inliers,

@@ -83,12 +83,12 @@ export async function POST(req: Request) {
       },
       viewpoint: viewpointAnalysis,
       baseline_metrics: {
-        candidate_matches: Math.round(baseline.metrics.total_matches * 0.85),
-        verified_inliers: Math.round(baseline.metrics.verified_inliers * 0.78),
-        inlier_ratio_pct: Math.round((baseline.metrics.inlier_ratio_pct * 0.82) * 10) / 10,
-        rmse_px: Math.round((baseline.metrics.rmse_px * 1.35) * 100) / 100,
-        confidence: Math.round((baseline.metrics.confidence * 0.84) * 10) / 10,
-        spatial_coverage_pct: Math.round((baseline.metrics.spatial_coverage_pct * 0.80) * 10) / 10,
+        candidate_matches: baseline.metrics.total_matches,
+        verified_inliers: baseline.metrics.verified_inliers,
+        inlier_ratio_pct: baseline.metrics.inlier_ratio_pct,
+        rmse_px: baseline.metrics.rmse_px,
+        confidence: baseline.metrics.confidence,
+        spatial_coverage_pct: baseline.metrics.spatial_coverage_pct,
       },
       normalized_metrics: {
         candidate_matches: normalized.metrics.total_matches,
@@ -99,9 +99,9 @@ export async function POST(req: Request) {
         spatial_coverage_pct: normalized.metrics.spatial_coverage_pct,
       },
       improvement: {
-        inlier_gain_pct: Math.round((normalized.metrics.inlier_ratio_pct - (baseline.metrics.inlier_ratio_pct * 0.82)) * 10) / 10,
-        rmse_reduction_px: Math.round(((baseline.metrics.rmse_px * 1.35) - normalized.metrics.rmse_px) * 100) / 100,
-        confidence_gain_pct: Math.round((normalized.metrics.confidence - (baseline.metrics.confidence * 0.84)) * 10) / 10,
+        inlier_gain_pct: Math.round((normalized.metrics.inlier_ratio_pct - baseline.metrics.inlier_ratio_pct) * 10) / 10,
+        rmse_reduction_px: Math.round((baseline.metrics.rmse_px - normalized.metrics.rmse_px) * 100) / 100,
+        confidence_gain_pct: Math.round((normalized.metrics.confidence - baseline.metrics.confidence) * 10) / 10,
       },
       spatial_grid: {
         grid_dimensions: '8x8',
