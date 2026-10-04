@@ -76,7 +76,9 @@ export default function TimelinePage() {
   const [events, setEvents] = useState<TimelineEvent[]>(FALLBACK_EVENTS);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/mission/timeline')
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+    fetch(`${apiBase}/api/mission/timeline`)
+      .catch(() => fetch('/api/mission/timeline'))
       .then(res => res.ok ? res.json() : null)
       .then(d => {
         if (d && d.length > 0) setEvents(d);

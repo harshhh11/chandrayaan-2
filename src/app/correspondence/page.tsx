@@ -65,7 +65,7 @@ export default function CorrespondencePage() {
   const targetFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isTarget: boolean) => {
     const file = e.target.files?.[0];

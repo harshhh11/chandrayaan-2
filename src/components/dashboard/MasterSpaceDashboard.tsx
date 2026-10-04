@@ -46,10 +46,11 @@ export const MasterSpaceDashboard: React.FC = () => {
   const [isComparing, setIsComparing] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  // Fetch real backend analytics from PostgreSQL / SQLite metadata layer
+  // Fetch real backend analytics
   useEffect(() => {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-    fetch(`${apiBase}/api/analytics/overview`)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+    fetch(`${apiBase}/api/analytics/summary`)
+      .catch(() => fetch('/api/analytics/summary'))
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data) {

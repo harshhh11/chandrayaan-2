@@ -56,7 +56,7 @@ export default function DatasetsPage() {
 
   const fetchDatasets = async () => {
     setLoading(true);
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
     try {
       const res = await fetch(`${apiBase}/api/datasets`);
       if (res.ok) {
@@ -76,7 +76,7 @@ export default function DatasetsPage() {
 
   const handleScanRaw = async () => {
     setScanning(true);
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
     try {
       const res = await fetch(`${apiBase}/api/ingest/scan-raw`, { method: 'POST' });
       if (res.ok) {
@@ -93,7 +93,7 @@ export default function DatasetsPage() {
     setInspectingDataset(item);
     setInspectModalOpen(true);
     setMetadataLoading(true);
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
     try {
       const res = await fetch(`${apiBase}/api/datasets/${item.id}/metadata`);
       if (res.ok) {
@@ -141,7 +141,7 @@ export default function DatasetsPage() {
       formData.append('title', uploadTitle);
     }
 
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
     try {
       const res = await fetch(`${apiBase}/api/datasets/ingest`, {
         method: 'POST',

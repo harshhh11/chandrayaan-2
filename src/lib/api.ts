@@ -1,7 +1,7 @@
 import { DatasetItem, RegistrationJob, RegistrationConfig, RegistrationMetrics, CorrespondencePoint } from '@/types/api';
 import { DEFAULT_DATASETS } from './defaultDatasets';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 export interface BackendDataset {
   id: string;

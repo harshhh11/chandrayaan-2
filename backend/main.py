@@ -16,17 +16,30 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from pydantic import BaseModel
 
-from .config import (
-    DATA_DIR, RAW_DIR, RAW_OHRC_DIR, RAW_TMC2_DIR, RAW_IIRS_DIR,
-    RESULTS_DIR, EXPORTS_DIR, BROWSE_DIR, THUMBNAILS_DIR, CORS_ORIGINS,
-    PRADAN_USERNAME, PRADAN_PASSWORD, BASE_DIR
-)
-from .database import db
-from .ingestion.product_validator import ProductValidator
-from .ingestion.metadata_parser import PDS4MetadataParser
-from .ingestion.pradan_client import PradanClient
-from .ingestion.storage_initializer import organize_real_storage
-from .pipeline.correspondence_engine import CorrespondenceEngine
+try:
+    from .config import (
+        DATA_DIR, RAW_DIR, RAW_OHRC_DIR, RAW_TMC2_DIR, RAW_IIRS_DIR,
+        RESULTS_DIR, EXPORTS_DIR, BROWSE_DIR, THUMBNAILS_DIR, CORS_ORIGINS,
+        PRADAN_USERNAME, PRADAN_PASSWORD, BASE_DIR
+    )
+    from .database import db
+    from .ingestion.product_validator import ProductValidator
+    from .ingestion.metadata_parser import PDS4MetadataParser
+    from .ingestion.pradan_client import PradanClient
+    from .ingestion.storage_initializer import organize_real_storage
+    from .pipeline.correspondence_engine import CorrespondenceEngine
+except (ImportError, ValueError):
+    from config import (
+        DATA_DIR, RAW_DIR, RAW_OHRC_DIR, RAW_TMC2_DIR, RAW_IIRS_DIR,
+        RESULTS_DIR, EXPORTS_DIR, BROWSE_DIR, THUMBNAILS_DIR, CORS_ORIGINS,
+        PRADAN_USERNAME, PRADAN_PASSWORD, BASE_DIR
+    )
+    from database import db
+    from ingestion.product_validator import ProductValidator
+    from ingestion.metadata_parser import PDS4MetadataParser
+    from ingestion.pradan_client import PradanClient
+    from ingestion.storage_initializer import organize_real_storage
+    from pipeline.correspondence_engine import CorrespondenceEngine
 
 app = FastAPI(
     title="EDOLUS // Chandrayaan-2 Lunar Image Intelligence Engine",

@@ -5,7 +5,10 @@ import uuid
 from typing import Dict, List, Optional, Any, Tuple
 from pathlib import Path
 from datetime import datetime
-from .config import DATA_DIR, DATABASE_URL, BASE_DIR
+try:
+    from .config import DATA_DIR, DATABASE_URL, BASE_DIR
+except (ImportError, ValueError):
+    from config import DATA_DIR, DATABASE_URL, BASE_DIR
 
 DB_PATH = DATA_DIR / "edolus.db"
 
