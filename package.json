@@ -13,7 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@react-three/drei": "^10.0.4",
+    "@react-three/drei": "^9.102.6",
     "@react-three/fiber": "^8.18.0",
     "@types/three": "^0.174.0",
     "clsx": "^2.1.1",
