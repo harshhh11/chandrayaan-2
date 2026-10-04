@@ -22,7 +22,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#030609] text-[#F4F6F8] font-sans selection:bg-[#38A8FF]/30 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#030609] text-[#F4F6F8] font-sans selection:bg-white/20 selection:text-white overflow-x-hidden">
       {/* 1. Top Landing Navigation Bar */}
       <Header />
 

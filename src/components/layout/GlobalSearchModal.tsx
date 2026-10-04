@@ -74,12 +74,12 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/80 backdrop-blur-md animate-fadeIn">
       <div 
-        className="w-full max-w-2xl bg-[#07111F]/95 border border-[#4DEBFF]/30 rounded-2xl shadow-[0_0_50px_rgba(0,184,255,0.2)] overflow-hidden flex flex-col"
+        className="w-full max-w-2xl bg-[#070D14]/95 border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Bar Input */}
-        <div className="flex items-center px-5 py-4 border-b border-white/10 gap-3 bg-[#0B1726]/60">
-          <Search className="w-5 h-5 text-[#4DEBFF] animate-pulse" />
+        <div className="flex items-center px-5 py-4 border-b border-white/10 gap-3 bg-[#0B131C]/60">
+          <Search className="w-5 h-5 text-white/80" />
           <input
             type="text"
             value={query}
@@ -110,10 +110,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   onClose();
                   router.push(item.route);
                 }}
-                className="w-full text-left p-3 rounded-xl hover:bg-[#2F80FF]/15 transition-all flex items-center justify-between group border border-transparent hover:border-[#4DEBFF]/20"
+                className="w-full text-left p-3 rounded-xl hover:bg-white/[0.06] transition-all flex items-center justify-between group border border-transparent hover:border-white/20"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#4DEBFF] group-hover:bg-[#00B8FF]/20">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#D9DDE0] group-hover:bg-white/10">
                     {item.category === 'MODULE' && <Layers className="w-4 h-4" />}
                     {item.category === 'IMAGE' && <Database className="w-4 h-4" />}
                     {item.category === 'CRATER' && <Globe className="w-4 h-4" />}
@@ -121,7 +121,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold font-mono text-white tracking-wide group-hover:text-[#4DEBFF] transition-colors">
+                      <span className="text-xs font-bold font-mono text-white tracking-wide group-hover:text-white transition-colors">
                         {item.title}
                       </span>
                       <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/10 text-white/70 border border-white/10">
@@ -133,7 +133,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-[#4DEBFF] group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
               </button>
             ))
           )}
@@ -145,7 +145,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
             <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/70">ESC</kbd> to close</span>
             <span><kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/70">↵</kbd> to select</span>
           </div>
-          <span className="text-[#4DEBFF]/80">EDOLUS INDEX // 12,486 RECORDS READY</span>
+          <span className="text-[#8D98A5]">EDOLUS INDEX // 12,486 RECORDS READY</span>
         </div>
       </div>
     </div>

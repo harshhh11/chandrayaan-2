@@ -68,7 +68,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           <Link
             href="/dashboard"
             onClick={() => spaceAudio.playTelemetryClick()}
-            className="px-6 py-3 rounded-[8px] bg-[#38A8FF] hover:bg-[#2094EC] text-white font-tech text-xs tracking-wider uppercase font-semibold transition-colors flex items-center gap-2"
+            className="px-6 py-3 rounded-[8px] bg-white hover:bg-[#E2E8F0] text-black font-tech text-xs tracking-wider uppercase font-bold transition-colors flex items-center gap-2"
           >
             <span>ENTER PLATFORM</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -117,10 +117,10 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           <div className="h-[1px] w-10 bg-white/20" />
           <div className="flex flex-col text-left">
             <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#F4F6F8]">AI INTELLIGENCE CORE</span>
-            <span className="text-[8px] sm:text-[9px] tracking-[0.14em] text-[#38A8FF]">REAL-TIME INFERENCE</span>
+            <span className="text-[8px] sm:text-[9px] tracking-[0.14em] text-[#D9DDE0]">REAL-TIME INFERENCE</span>
           </div>
           <div className="h-[1px] w-6 bg-white/20" />
-          <div className="w-1.5 h-1.5 rounded-full bg-[#38A8FF]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white" />
         </div>
 
         {/* Callout 2: SOLAR ARRAY MATRIX */}
@@ -135,7 +135,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
 
         {/* Callout 3: ORBITAL TELEMETRY NODE */}
         <div className="absolute top-[64%] right-[22%] sm:right-[26%] hidden md:flex items-center gap-2.5 opacity-70">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#38A8FF]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white" />
           <div className="h-[1px] w-8 bg-white/20" />
           <div className="flex flex-col text-left">
             <span className="text-[9px] font-bold tracking-[0.18em] text-[#F4F6F8]">ORBITAL TELEMETRY NODE</span>
@@ -149,7 +149,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           ======================================================== */}
       <div className="absolute top-24 sm:top-28 right-6 sm:right-12 hidden sm:flex flex-col items-end gap-1 font-tech text-[9px] sm:text-[10px] tracking-[0.18em] text-[#59636E]">
         <div className="flex items-center gap-2">
-          <span className="text-[#38A8FF] font-bold text-xs">+</span>
+          <span className="text-[#D9DDE0] font-bold text-xs">+</span>
           <div className="h-[1px] w-8 bg-white/10" />
           <span className="text-[#F4F6F8] tracking-[0.2em]">LLO / 100.0 KM</span>
         </div>
@@ -167,7 +167,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({ mouseX, mouseY }) => {
           className="flex items-center gap-2 font-tech text-[10px] tracking-[0.2em] uppercase text-[#8D98A5] hover:text-[#F4F6F8] transition-colors duration-200 group"
         >
           <span>SCROLL TO EXPLORE</span>
-          <span className="text-[#38A8FF] group-hover:translate-y-0.5 transition-transform">↓</span>
+          <span className="text-[#D9DDE0] group-hover:translate-y-0.5 transition-transform">↓</span>
         </a>
       </div>
     </div>

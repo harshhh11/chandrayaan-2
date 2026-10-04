@@ -37,14 +37,14 @@ export default function AlertsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-[#4DEBFF] selection:text-black">
+    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-white/20 selection:text-white">
       <EdolusTopNav />
 
       <main className="pt-20 pb-12 px-4 sm:px-8 max-w-[1920px] mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
-            <div className="text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
+            <div className="text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
               MISSION AUDIT LOG & CONJUNCTION MONITORING
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-sans tracking-tight text-white mt-0.5">
@@ -56,12 +56,12 @@ export default function AlertsPage() {
         {/* Alerts List */}
         <div className="space-y-4 max-w-4xl">
           {alertsList.map(a => (
-            <div key={a.id} className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 hover:border-[#4DEBFF]/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div key={a.id} className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 hover:border-white/25 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start gap-3.5">
                 <div className="mt-0.5">
                   {a.severity === 'WARNING' && <AlertTriangle className="w-5 h-5 text-[#FFB547]" />}
-                  {a.severity === 'INFO' && <Radio className="w-5 h-5 text-[#4DEBFF]" />}
-                  {a.severity === 'SUCCESS' && <CheckCircle2 className="w-5 h-5 text-[#24D99B]" />}
+                  {a.severity === 'INFO' && <Radio className="w-5 h-5 text-[#D9DDE0]" />}
+                  {a.severity === 'SUCCESS' && <CheckCircle2 className="w-5 h-5 text-[#32D39A]" />}
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function AlertsPage() {
 
               <Link
                 href={a.link}
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-[#2F80FF]/20 text-[#4DEBFF] border border-white/10 text-xs font-mono whitespace-nowrap transition-colors flex items-center gap-1.5 self-start sm:self-auto"
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white border border-white/10 text-xs font-mono whitespace-nowrap transition-colors flex items-center gap-1.5 self-start sm:self-auto font-bold"
               >
                 <span>{a.action}</span>
                 <ArrowRight className="w-3.5 h-3.5" />

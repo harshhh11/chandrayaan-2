@@ -172,8 +172,8 @@ export default function DatasetsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-tech tracking-[0.18em] text-[#38A8FF] uppercase font-medium">
-              <Database className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 text-[10px] font-tech tracking-[0.18em] text-[#8D98A5] uppercase font-medium">
+              <Database className="w-3.5 h-3.5 text-[#D9DDE0]" />
               <span>ISRO SCIENCE DATA ARCHIVE (ISDA) // CHANDRAYAAN-2 OPTICAL & HYPERSPECTRAL</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-display font-bold tracking-tight text-[#F4F6F8] mt-1">
@@ -188,13 +188,13 @@ export default function DatasetsPage() {
               className="px-3.5 py-2.5 rounded-lg bg-[#0A1118] hover:bg-[#121E2A] border border-white/10 text-white/80 hover:text-white font-tech text-xs tracking-wide transition-colors flex items-center gap-2"
               title="Scan /data/raw directory for unindexed products"
             >
-              <HardDrive className={`w-3.5 h-3.5 text-[#38A8FF] ${scanning ? 'animate-spin' : ''}`} />
+              <HardDrive className={`w-3.5 h-3.5 text-[#D9DDE0] ${scanning ? 'animate-spin' : ''}`} />
               <span>{scanning ? 'Scanning Raw Storage...' : 'Scan /data/raw'}</span>
             </button>
 
             <button
               onClick={() => { setUploadError(null); setUploadModalOpen(true); }}
-              className="px-4 py-2.5 rounded-lg bg-[#38A8FF] hover:bg-[#2094EC] text-white font-sans text-xs font-medium tracking-wide transition-colors shadow-[0_0_15px_rgba(56,168,255,0.25)] flex items-center gap-2"
+              className="px-4 py-2.5 rounded-lg bg-white hover:bg-[#E2E8F0] text-black font-sans text-xs font-bold tracking-wide transition-colors shadow-sm flex items-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Ingest PDS4 / Raster</span>
@@ -230,7 +230,7 @@ export default function DatasetsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search product ID, crater region, coordinates..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#050A12] border border-white/10 text-xs font-mono text-white placeholder-white/40 focus:outline-none focus:border-[#4DEBFF]"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#050A12] border border-white/10 text-xs font-mono text-white placeholder-white/40 focus:outline-none focus:border-white/40"
             />
           </div>
 
@@ -274,7 +274,7 @@ export default function DatasetsPage() {
 
                       {/* ID & Title */}
                       <td className="py-3 px-4">
-                        <div className="font-bold text-white group-hover:text-[#4DEBFF] transition-colors">
+                        <div className="font-bold text-white group-hover:text-[#D9DDE0] transition-colors">
                           {item.id}
                         </div>
                         <div className="text-[11px] text-white/50 font-sans truncate max-w-[240px]">
@@ -286,10 +286,10 @@ export default function DatasetsPage() {
                       <td className="py-3 px-4">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                           item.instrument === 'OHRC'
-                            ? 'bg-[#4DEBFF]/10 text-[#4DEBFF] border-[#4DEBFF]/30'
+                            ? 'bg-white/10 text-white border-white/20'
                             : item.instrument === 'TMC-2'
-                            ? 'bg-[#2F80FF]/10 text-[#2F80FF] border-[#2F80FF]/30'
-                            : 'bg-[#FFB547]/10 text-[#FFB547] border-[#FFB547]/30'
+                            ? 'bg-slate-500/20 text-[#D9DDE0] border-slate-500/30'
+                            : 'bg-[#C89A45]/15 text-[#C89A45] border-[#C89A45]/30'
                         }`}>
                           {item.instrument}
                         </span>
@@ -323,12 +323,12 @@ export default function DatasetsPage() {
                           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors text-[10px]"
                           title="Inspect Metadata & PDS4 Label"
                         >
-                          <FileCode className="w-3 h-3 text-[#38A8FF]" />
+                          <FileCode className="w-3 h-3 text-[#D9DDE0]" />
                           <span>PDS4 Info</span>
                         </button>
                         <Link
                           href={`/correspondence?source=${encodeURIComponent(item.product_id || item.id)}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#2F80FF]/20 hover:bg-[#2F80FF]/40 text-[#4DEBFF] transition-colors text-[10px]"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors text-[10px] font-bold"
                           title="Match in Correspondence Workbench"
                         >
                           <GitCompare className="w-3 h-3" />
@@ -348,10 +348,10 @@ export default function DatasetsPage() {
            ======================================================== */}
         {inspectModalOpen && inspectingDataset && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-            <div className="w-full max-w-3xl bg-[#07111F] border border-[#38A8FF]/40 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="w-full max-w-3xl bg-[#07111F] border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <FileCode className="w-5 h-5 text-[#38A8FF]" />
+                  <FileCode className="w-5 h-5 text-[#D9DDE0]" />
                   <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
                     PDS4 SCIENTIFIC METADATA // {inspectingDataset.id}
                   </h3>
@@ -373,7 +373,7 @@ export default function DatasetsPage() {
                       alt={inspectingDataset.id}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-mono text-[#4DEBFF]">
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-mono text-[#D9DDE0]">
                       {inspectingDataset.instrument}
                     </div>
                   </div>
@@ -385,7 +385,7 @@ export default function DatasetsPage() {
                     </div>
                     <div>
                       <span className="text-white/40 block text-[9px] uppercase">Payload Instrument</span>
-                      <span className="text-[#38A8FF] font-bold">{inspectingDataset.instrument}</span>
+                      <span className="text-[#D9DDE0] font-bold">{inspectingDataset.instrument}</span>
                     </div>
                     <div>
                       <span className="text-white/40 block text-[9px] uppercase">Center Coordinates</span>
@@ -397,11 +397,11 @@ export default function DatasetsPage() {
                     </div>
                     <div>
                       <span className="text-white/40 block text-[9px] uppercase">Sun Elevation Angle</span>
-                      <span className="text-[#FFB547] font-bold">{inspectingDataset.sun_elevation}°</span>
+                      <span className="text-[#C89A45] font-bold">{inspectingDataset.sun_elevation}°</span>
                     </div>
                     <div>
                       <span className="text-white/40 block text-[9px] uppercase">Sun Azimuth Angle</span>
-                      <span className="text-[#FFB547] font-bold">{inspectingDataset.sun_azimuth}°</span>
+                      <span className="text-[#C89A45] font-bold">{inspectingDataset.sun_azimuth}°</span>
                     </div>
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export default function DatasetsPage() {
            ======================================================== */}
         {uploadModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-            <div className="w-full max-w-lg bg-[#07111F] border border-[#38A8FF]/30 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="w-full max-w-lg bg-[#07111F] border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
                   INGEST CHANDRAYAAN-2 PRODUCT (ZIP / RASTER + XML)
@@ -464,7 +464,7 @@ export default function DatasetsPage() {
                     value={uploadTitle}
                     onChange={(e) => setUploadTitle(e.target.value)}
                     placeholder="e.g. Boguslawsky Crater South Polar Swath"
-                    className="w-full px-3 py-2 rounded-xl bg-[#050A12] border border-white/10 text-white focus:outline-none focus:border-[#4DEBFF]"
+                    className="w-full px-3 py-2 rounded-xl bg-[#050A12] border border-white/10 text-white focus:outline-none focus:border-white/40"
                   />
                 </div>
 
@@ -473,7 +473,7 @@ export default function DatasetsPage() {
                   <select
                     value={uploadSensor}
                     onChange={(e) => setUploadSensor(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#050A12] border border-white/10 text-white focus:outline-none focus:border-[#4DEBFF]"
+                    className="w-full px-3 py-2 rounded-xl bg-[#050A12] border border-white/10 text-white focus:outline-none focus:border-white/40"
                   >
                     <option value="OHRC">OHRC (0.25 m/px High-Resolution)</option>
                     <option value="TMC-2">TMC-2 (5.0 m/px Terrain Mapping)</option>
@@ -488,7 +488,7 @@ export default function DatasetsPage() {
                     type="file"
                     accept=".png,.jpg,.jpeg,.tif,.tiff,.zip"
                     onChange={(e) => setUploadFile(e.target.files ? e.target.files[0] : null)}
-                    className="w-full text-xs text-white/60 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono file:bg-[#38A8FF]/20 file:text-[#38A8FF] hover:file:bg-[#38A8FF]/30 cursor-pointer"
+                    className="w-full text-xs text-white/60 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
                     required
                   />
                 </div>

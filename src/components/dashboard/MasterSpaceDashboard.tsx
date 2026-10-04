@@ -124,11 +124,11 @@ export const MasterSpaceDashboard: React.FC = () => {
               <path 
                 d="M 220,540 Q 820,180 1420,290" 
                 fill="none" 
-                stroke="#38A8FF" 
+                stroke="#D9DDE0" 
                 strokeWidth="1" 
                 strokeDasharray="3 5"
               />
-              <circle cx="940" cy="272" r="3" fill="#38A8FF" />
+              <circle cx="940" cy="272" r="3" fill="#D9DDE0" />
             </svg>
           </div>
 
@@ -160,7 +160,7 @@ export const MasterSpaceDashboard: React.FC = () => {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
                   href="/correspondence"
-                  className="px-5 py-2.5 rounded-[8px] bg-[#38A8FF] hover:bg-[#2094EC] text-white font-sans text-xs font-semibold tracking-wide transition-colors flex items-center gap-2 group"
+                  className="px-5 py-2.5 rounded-[8px] bg-white hover:bg-[#E2E8F0] text-black font-sans text-xs font-bold tracking-wide transition-colors flex items-center gap-2 group"
                 >
                   <span>Run Correspondence</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -177,13 +177,13 @@ export const MasterSpaceDashboard: React.FC = () => {
             </div>
 
             {/* Right Side: Floating Glass Telemetry Cards Stack */}
-            <div className="space-y-3 w-full sm:w-76 shrink-0">
+            <div className="space-y-2 w-full sm:w-60 shrink-0">
               
               {/* Card 1: Spacecraft Telemetry Panel */}
-              <div className="glass-telemetry rounded-[12px] p-4">
-                <div className="flex items-center gap-3 mb-3">
+              <div className="rounded-[10px] bg-black/25 backdrop-blur-md border border-white/[0.08] p-3 transition-all hover:border-white/20">
+                <div className="flex items-center gap-2 mb-2">
                   {/* Moon Sphere Thumbnail */}
-                  <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+                  <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 shrink-0">
                     <img 
                       src="/images/moon_globe.png" 
                       alt="Moon" 
@@ -191,10 +191,10 @@ export const MasterSpaceDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <h3 className="text-xs font-sans font-semibold text-[#F4F6F8] tracking-wide">
+                    <h3 className="text-[11px] font-sans font-semibold text-[#F4F6F8] tracking-wide">
                       Chandrayaan-2 (OHRC)
                     </h3>
-                    <div className="flex items-center gap-1.5 text-[10px] font-tech text-[#32D39A] mt-0.5">
+                    <div className="flex items-center gap-1.5 text-[9px] font-tech text-[#32D39A]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#32D39A]" />
                       <span>In Orbit</span>
                     </div>
@@ -202,42 +202,42 @@ export const MasterSpaceDashboard: React.FC = () => {
                 </div>
 
                 {/* 2x2 Telemetry Grid */}
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/[0.07] font-tech text-xs">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.06] font-tech">
                   <div>
-                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Altitude</span>
-                    <span className="text-[#F4F6F8] font-bold text-sm">100 km</span>
+                    <span className="text-[8px] text-[#8D98A5] block uppercase tracking-wider">Altitude</span>
+                    <span className="text-[#F4F6F8] font-bold text-xs">100 km</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Inclination</span>
-                    <span className="text-[#F4F6F8] font-bold text-sm">90.0° Polar</span>
+                    <span className="text-[8px] text-[#8D98A5] block uppercase tracking-wider">Inclination</span>
+                    <span className="text-[#F4F6F8] font-bold text-xs">90.0° Polar</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Velocity</span>
-                    <span className="text-[#F4F6F8] font-bold text-sm">1.60 km/s</span>
+                    <span className="text-[8px] text-[#8D98A5] block uppercase tracking-wider">Velocity</span>
+                    <span className="text-[#F4F6F8] font-bold text-xs">1.60 km/s</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[#59636E] block uppercase tracking-wider">Next Pass</span>
-                    <span className="text-[#38A8FF] font-bold text-sm">{formatTimer(timerSeconds)}</span>
+                    <span className="text-[8px] text-[#8D98A5] block uppercase tracking-wider">Next Pass</span>
+                    <span className="text-[#D9DDE0] font-bold text-xs">{formatTimer(timerSeconds)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Card 2: Target Location Coordinates */}
-              <div className="glass-telemetry rounded-[12px] p-3 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[6px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
-                    <Crosshair className="w-3.5 h-3.5 text-[#38A8FF]" />
+              <div className="rounded-[10px] bg-black/25 backdrop-blur-md border border-white/[0.08] p-2 flex items-center justify-between transition-all hover:border-white/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-[4px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                    <Crosshair className="w-3 h-3 text-[#D9DDE0]" />
                   </div>
                   <div>
-                    <div className="text-xs font-tech font-bold text-[#F4F6F8]">
+                    <div className="text-[11px] font-tech font-bold text-[#F4F6F8]">
                       74.32° S, 53.64° E
                     </div>
-                    <div className="text-[9.5px] font-tech text-[#8D98A5] tracking-wider uppercase">
+                    <div className="text-[8.5px] font-tech text-[#8D98A5] tracking-wider uppercase">
                       BOGUSLAWSKY CRATER
                     </div>
                   </div>
                 </div>
-                <span className="px-1.5 py-0.5 rounded-[4px] bg-[#38A8FF]/10 border border-[#38A8FF]/20 text-[#38A8FF] text-[9px] font-tech font-medium">
+                <span className="px-1.5 py-0.5 rounded-[4px] bg-white/[0.06] border border-white/15 text-[#D9DDE0] text-[8.5px] font-tech font-medium">
                   LIVE
                 </span>
               </div>
@@ -350,7 +350,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke="#38A8FF"
+                  stroke="#32D39A"
                   strokeDasharray="91.4, 100"
                   strokeWidth="3"
                   strokeLinecap="round"
@@ -398,7 +398,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   LIVE ORBITAL VIEW ({viewMode})
                 </h3>
                 <Link href="/3d" title="Open Fullscreen 3D Viewer">
-                  <ExternalLink className="w-3 h-3 text-[#59636E] hover:text-[#38A8FF] transition-colors" />
+                  <ExternalLink className="w-3 h-3 text-[#59636E] hover:text-white transition-colors" />
                 </Link>
               </div>
 
@@ -408,7 +408,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   onClick={() => setViewMode('2D')}
                   className={`px-3 py-1 rounded-[4px] transition-all cursor-pointer font-bold ${
                     viewMode === '2D' 
-                      ? 'bg-[#38A8FF] text-black shadow-[0_0_10px_rgba(56,168,255,0.5)]' 
+                      ? 'bg-white text-black' 
                       : 'text-[#8D98A5] hover:text-[#F4F6F8]'
                   }`}
                 >
@@ -418,7 +418,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   onClick={() => setViewMode('3D')}
                   className={`px-3 py-1 rounded-[4px] transition-all cursor-pointer font-bold ${
                     viewMode === '3D' 
-                      ? 'bg-[#38A8FF] text-black shadow-[0_0_10px_rgba(56,168,255,0.5)]' 
+                      ? 'bg-white text-black' 
                       : 'text-[#8D98A5] hover:text-[#F4F6F8]'
                   }`}
                 >
@@ -450,11 +450,11 @@ export const MasterSpaceDashboard: React.FC = () => {
                     {/* Lat / Lon Graticule Grid */}
                     <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 400 200" preserveAspectRatio="none">
                       {/* Equator & Parallels */}
-                      <line x1="0" y1="100" x2="400" y2="100" stroke="#38A8FF" strokeWidth="0.75" />
+                      <line x1="0" y1="100" x2="400" y2="100" stroke="#D9DDE0" strokeWidth="0.75" />
                       <line x1="0" y1="50" x2="400" y2="50" stroke="#8D98A5" strokeWidth="0.5" strokeDasharray="2 3" />
                       <line x1="0" y1="150" x2="400" y2="150" stroke="#8D98A5" strokeWidth="0.5" strokeDasharray="2 3" />
                       {/* Meridians */}
-                      <line x1="200" y1="0" x2="200" y2="200" stroke="#38A8FF" strokeWidth="0.75" />
+                      <line x1="200" y1="0" x2="200" y2="200" stroke="#D9DDE0" strokeWidth="0.75" />
                       <line x1="100" y1="0" x2="100" y2="200" stroke="#8D98A5" strokeWidth="0.5" strokeDasharray="2 3" />
                       <line x1="300" y1="0" x2="300" y2="200" stroke="#8D98A5" strokeWidth="0.5" strokeDasharray="2 3" />
 
@@ -474,12 +474,12 @@ export const MasterSpaceDashboard: React.FC = () => {
                     {activeLayers.ohrcFootprints && (
                       <>
                         {/* Boguslawsky Footprint */}
-                        <div className="absolute bottom-6 right-16 w-8 h-8 border border-[#38A8FF] bg-[#38A8FF]/20 rounded-sm flex items-center justify-center">
-                          <span className="text-[7px] font-mono text-[#38A8FF]">OHRC</span>
+                        <div className="absolute bottom-6 right-16 w-8 h-8 border border-white/40 bg-white/10 rounded-sm flex items-center justify-center">
+                          <span className="text-[7px] font-mono text-[#D9DDE0]">OHRC</span>
                         </div>
                         {/* Tycho Footprint */}
-                        <div className="absolute bottom-12 left-24 w-8 h-8 border border-[#38A8FF] bg-[#38A8FF]/20 rounded-sm flex items-center justify-center">
-                          <span className="text-[7px] font-mono text-[#38A8FF]">OHRC</span>
+                        <div className="absolute bottom-12 left-24 w-8 h-8 border border-white/40 bg-white/10 rounded-sm flex items-center justify-center">
+                          <span className="text-[7px] font-mono text-[#D9DDE0]">OHRC</span>
                         </div>
                       </>
                     )}
@@ -499,8 +499,8 @@ export const MasterSpaceDashboard: React.FC = () => {
                       <>
                         {/* Boguslawsky Crater Pin */}
                         <div className="absolute bottom-5 right-20 flex items-center gap-1.5 z-20 group cursor-pointer">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#38A8FF] ring-2 ring-white/80 animate-ping absolute" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#38A8FF] ring-1 ring-white relative" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-white ring-2 ring-white/80 animate-ping absolute" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-white ring-1 ring-white relative" />
                           <div className="px-2 py-0.5 rounded bg-black/90 border border-white/20 text-[8px] font-mono text-white whitespace-nowrap shadow-lg">
                             Boguslawsky E (74.32°S, 53.64°E)
                           </div>
@@ -527,7 +527,7 @@ export const MasterSpaceDashboard: React.FC = () => {
               {/* 3D ROTATABLE GLOBE PROJECTION */}
               {viewMode === '3D' && (
                 <div 
-                  className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border border-[#38A8FF]/40 shadow-[0_0_50px_rgba(56,168,255,0.25)] flex items-center justify-center transition-transform duration-300"
+                  className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border border-white/20 shadow-[0_0_40px_rgba(255,255,255,0.06)] flex items-center justify-center transition-transform duration-300"
                   style={{ transform: `scale(${zoomLevel})` }}
                 >
                   <img 
@@ -537,7 +537,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   />
 
                   {/* 3D Atmospheric Limb & Glow */}
-                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_30px_rgba(56,168,255,0.4)] pointer-events-none" />
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_30px_rgba(255,255,255,0.12)] pointer-events-none" />
 
                   {/* Orbit Ground Track Ring with Orbiting Satellite */}
                   {activeLayers.chandrayaan2 && (
@@ -548,7 +548,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                         rx="130" 
                         ry="55" 
                         fill="none" 
-                        stroke="#38A8FF" 
+                        stroke="#D9DDE0" 
                         strokeWidth="1.5" 
                         strokeDasharray="4 4"
                         transform="rotate(65 150 150)"
@@ -563,7 +563,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   {/* Target Pin Marker (Boguslawsky) */}
                   {activeLayers.lunarTargets && (
                     <div className="absolute bottom-10 right-10 flex items-center gap-1.5 z-20">
-                      <div className="w-2.5 h-2.5 rounded-full border border-white bg-[#38A8FF] shadow-[0_0_10px_#38A8FF]" />
+                      <div className="w-2.5 h-2.5 rounded-full border border-white bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
                       <div className="px-2 py-1 rounded-[6px] bg-[#0D151E]/95 border border-white/20 text-[9px] font-tech shadow-xl flex items-center gap-1.5">
                         <div className="w-3.5 h-3.5 rounded overflow-hidden border border-white/10 shrink-0">
                           <img src="/api/products/ch2_ohr_ncp_20191015T041200_d_img_d18/thumbnail" alt="Boguslawsky" className="w-full h-full object-cover" />
@@ -617,7 +617,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                 </button>
                 <Link 
                   href="/3d"
-                  className="w-6 h-6 rounded-[5px] bg-[#05090D] border border-white/[0.08] flex items-center justify-center text-[#8D98A5] hover:text-[#38A8FF] transition-colors"
+                  className="w-6 h-6 rounded-[5px] bg-[#05090D] border border-white/[0.08] flex items-center justify-center text-[#8D98A5] hover:text-white transition-colors"
                   title="Fullscreen 3D Viewer"
                 >
                   <Maximize2 className="w-3 h-3" />
@@ -759,8 +759,8 @@ export const MasterSpaceDashboard: React.FC = () => {
                         style={{ top: `${pt.y2}%`, left: `${pt.x2}%` }}
                         className={`absolute -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full cursor-pointer transition-transform ${
                           hoveredPoint === pt.id 
-                            ? 'bg-white ring-2 ring-[#38A8FF] scale-150 z-30 shadow-[0_0_10px_#38A8FF]' 
-                            : 'bg-[#38A8FF] shadow-sm'
+                            ? 'bg-white ring-2 ring-white scale-150 z-30 shadow-[0_0_10px_white]' 
+                            : 'bg-[#D9DDE0] shadow-sm'
                         }`}
                       />
                     ))}
@@ -817,7 +817,7 @@ export const MasterSpaceDashboard: React.FC = () => {
               </div>
               <div>
                 <span className="text-[8.5px] text-[#59636E] uppercase tracking-wider block">Error</span>
-                <span className="text-[#38A8FF] font-bold text-xs sm:text-sm">0.42 px</span>
+                <span className="text-[#D9DDE0] font-bold text-xs sm:text-sm">0.42 px</span>
               </div>
             </div>
 
@@ -828,7 +828,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                 className={`px-3.5 py-1.5 rounded-[6px] text-xs font-sans font-bold transition-all cursor-pointer ${
                   isComparing 
                     ? 'bg-[#32D39A] text-black shadow-[0_0_12px_rgba(50,211,154,0.5)]' 
-                    : 'bg-[#38A8FF] hover:bg-[#2094EC] text-white'
+                    : 'bg-white hover:bg-[#E2E8F0] text-black'
                 }`}
               >
                 {isComparing ? 'Exit Compare' : 'Compare (Split View)'}
@@ -841,7 +841,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                     onClick={() => { setMatchView('matches'); setIsComparing(false); }}
                     className={`px-2.5 py-0.5 rounded-[4px] transition-all cursor-pointer font-bold ${
                       matchView === 'matches' && !isComparing
-                        ? 'bg-[#38A8FF] text-black'
+                        ? 'bg-white text-black'
                         : 'text-[#8D98A5] hover:text-[#F4F6F8]'
                     }`}
                   >
@@ -851,7 +851,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                     onClick={() => { setMatchView('overlay'); setIsComparing(false); }}
                     className={`px-2.5 py-0.5 rounded-[4px] transition-all cursor-pointer font-bold ${
                       matchView === 'overlay' && !isComparing
-                        ? 'bg-[#38A8FF] text-black'
+                        ? 'bg-white text-black'
                         : 'text-[#8D98A5] hover:text-[#F4F6F8]'
                     }`}
                   >
@@ -862,7 +862,7 @@ export const MasterSpaceDashboard: React.FC = () => {
 
               <Link
                 href="/correspondence"
-                className="p-1.5 rounded-[6px] bg-white/[0.05] hover:bg-[#38A8FF]/20 text-[#8D98A5] hover:text-[#38A8FF] transition-colors"
+                className="p-1.5 rounded-[6px] bg-white/[0.05] hover:bg-white/10 text-[#8D98A5] hover:text-white transition-colors"
                 title="Open in Full Correspondence Engine"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
@@ -927,7 +927,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                   {/* Solar Dial Graphic */}
                   <div className="pt-1 flex items-center justify-center">
                     <div className="relative w-8 h-8 rounded-full border border-dashed border-white/20 flex items-center justify-center">
-                      <div className="absolute w-1.5 h-1.5 rounded-full bg-[#38A8FF] bottom-0.5 left-1" />
+                      <div className="absolute w-1.5 h-1.5 rounded-full bg-[#D9DDE0] bottom-0.5 left-1" />
                       <div className="w-1 h-1 rounded-full bg-white/30" />
                     </div>
                   </div>
@@ -946,7 +946,7 @@ export const MasterSpaceDashboard: React.FC = () => {
             <div className="rounded-[12px] bg-[#0A1118] border border-white/[0.08] p-4 shadow-xl flex-1 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-white/[0.07]">
                 <div className="flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-[#38A8FF]" />
+                  <Layers className="w-3.5 h-3.5 text-[#D9DDE0]" />
                   <h3 className="text-xs font-tech font-semibold tracking-wider text-[#F4F6F8] uppercase">
                     SCALE-INVARIANT MATCHING
                   </h3>
@@ -968,7 +968,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                 </div>
                 <div className="p-1.5 rounded-[6px] bg-[#030609] border border-white/[0.06]">
                   <span className="text-[8.5px] text-[#59636E] block uppercase">Ratio</span>
-                  <span className="text-[#38A8FF] font-bold text-[11px]">4.8×</span>
+                  <span className="text-[#D9DDE0] font-bold text-[11px]">4.8×</span>
                 </div>
               </div>
 
@@ -987,7 +987,7 @@ export const MasterSpaceDashboard: React.FC = () => {
                         onClick={() => setSelectedPyramidScale(lvl.toLowerCase())}
                         className={`p-1 rounded-[5px] border transition-all ${
                           isSelected
-                            ? 'bg-[#0D151E] border-[#38A8FF] text-[#38A8FF] font-medium'
+                            ? 'bg-white/10 border-white text-white font-medium'
                             : 'bg-[#030609] border-white/[0.06] text-[#8D98A5] hover:border-white/20'
                         }`}
                       >

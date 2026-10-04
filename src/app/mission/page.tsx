@@ -7,14 +7,14 @@ import { EdolusTopNav } from '@/components/layout/EdolusTopNav';
 
 export default function MissionPage() {
   return (
-    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-[#4DEBFF] selection:text-black">
+    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-white/20 selection:text-white">
       <EdolusTopNav />
 
       <main className="pt-20 pb-12 px-4 sm:px-8 max-w-[1920px] mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
-            <div className="text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
+            <div className="text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
               CHANDRAYAAN-2 LUNAR ORBITAL MISSION CONTEXT
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-sans tracking-tight text-white mt-0.5">
@@ -27,8 +27,8 @@ export default function MissionPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#4DEBFF]">ORBIT PROPAGATION</span>
-              <span className="text-[10px] font-mono text-[#24D99B]">CIRCULAR POLAR</span>
+              <span className="text-xs font-mono font-bold text-white">ORBIT PROPAGATION</span>
+              <span className="text-[10px] font-mono text-[#32D39A]">CIRCULAR POLAR</span>
             </div>
             <div className="text-2xl font-mono font-bold text-white">100.4 × 99.8 km</div>
             <p className="text-xs text-white/60 font-sans">
@@ -38,8 +38,8 @@ export default function MissionPage() {
 
           <div className="p-6 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#2F80FF]">COMMUNICATION LINK</span>
-              <span className="text-[10px] font-mono text-[#24D99B]">LOCKED</span>
+              <span className="text-xs font-mono font-bold text-[#D9DDE0]">COMMUNICATION LINK</span>
+              <span className="text-[10px] font-mono text-[#32D39A]">LOCKED</span>
             </div>
             <div className="text-2xl font-mono font-bold text-white">IDSN BYALALU</div>
             <p className="text-xs text-white/60 font-sans">

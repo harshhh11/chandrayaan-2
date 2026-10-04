@@ -43,7 +43,7 @@ export const SwipeComparisonViewer: React.FC<SwipeComparisonViewerProps> = ({
       {/* Mode Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-white/[0.08] text-[11px]">
         <div className="flex items-center gap-2 text-white/80 uppercase font-semibold">
-          <span className="w-2 h-2 rounded-full bg-[#00C8FF] shadow-[0_0_6px_#00C8FF]" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
           <span>REGISTERED PRODUCT INSPECTION</span>
         </div>
 
@@ -54,7 +54,7 @@ export const SwipeComparisonViewer: React.FC<SwipeComparisonViewerProps> = ({
               onClick={() => setMode(m)}
               className={`px-3 py-1 rounded border text-[10px] uppercase transition-all ${
                 mode === m
-                  ? 'bg-[#00C8FF]/20 border-[#00C8FF] text-[#00C8FF] font-bold shadow-[0_0_10px_rgba(0,200,255,0.2)]'
+                  ? 'bg-white text-black font-bold border-white shadow-[0_0_10px_rgba(255,255,255,0.2)]'
                   : 'border-white/10 text-white/50 hover:text-white'
               }`}
             >
@@ -92,12 +92,12 @@ export const SwipeComparisonViewer: React.FC<SwipeComparisonViewerProps> = ({
               />
             </div>
 
-            {/* Vertical Divider Line with Cyan Handle */}
+            {/* Vertical Divider Line with Clean Handle */}
             <div
               style={{ left: `${sliderPos}%` }}
-              className="absolute top-0 bottom-0 w-[2px] bg-[#00C8FF] shadow-[0_0_10px_#00C8FF] pointer-events-none flex items-center justify-center -translate-x-1/2"
+              className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)] pointer-events-none flex items-center justify-center -translate-x-1/2"
             >
-              <div className="w-6 h-6 rounded-full bg-[#05070a] border-2 border-[#00C8FF] shadow-[0_0_8px_#00C8FF] flex items-center justify-center text-[9px] text-[#00C8FF] font-bold">
+              <div className="w-6 h-6 rounded-full bg-[#05070a] border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.5)] flex items-center justify-center text-[9px] text-white font-bold">
                 ↔
               </div>
             </div>
@@ -119,7 +119,7 @@ export const SwipeComparisonViewer: React.FC<SwipeComparisonViewerProps> = ({
               alt="Blend"
               className="w-full h-full object-contain"
             />
-            <div className="absolute top-4 left-4 px-2.5 py-1 rounded bg-black/75 border border-[#00C8FF]/30 text-[9px] text-[#00C8FF]">
+            <div className="absolute top-4 left-4 px-2.5 py-1 rounded bg-black/75 border border-white/20 text-[9px] text-white">
               50 / 50 ALPHA BLEND OVERLAY
             </div>
           </div>

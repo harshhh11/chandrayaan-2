@@ -91,8 +91,8 @@ export default function TimelinePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
-              <Calendar className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
+              <Calendar className="w-3.5 h-3.5 text-[#D9DDE0]" />
               <span>CHANDRAYAAN-2 LUNAR OBSERVATION CAMPAIGN (2019 – 2024)</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-sans tracking-tight text-white mt-1">
@@ -102,19 +102,19 @@ export default function TimelinePage() {
         </div>
 
         {/* Timeline Sequence */}
-        <div className="relative pl-6 sm:pl-10 space-y-8 border-l border-[#4DEBFF]/30 my-6">
+        <div className="relative pl-6 sm:pl-10 space-y-8 border-l border-white/20 my-6">
           {events.map((ev, idx) => (
             <div key={ev.id} className="relative group">
               {/* Timeline Pin */}
-              <div className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07111F] border-2 border-[#4DEBFF] shadow-[0_0_10px_#4DEBFF] group-hover:scale-125 transition-transform" />
+              <div className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-[#07111F] border-2 border-white/60 shadow-[0_0_8px_rgba(255,255,255,0.4)] group-hover:scale-125 transition-transform" />
 
-              <div className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 hover:border-[#4DEBFF]/40 transition-all space-y-2">
+              <div className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 hover:border-white/30 transition-all space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#2F80FF]/20 border border-[#4DEBFF]/30 text-xs font-mono font-bold text-[#4DEBFF]">
+                    <span className="px-2.5 py-0.5 rounded-md bg-white/10 border border-white/20 text-xs font-mono font-bold text-white">
                       {ev.year}
                     </span>
-                    <h3 className="text-base font-mono font-bold text-white group-hover:text-[#4DEBFF] transition-colors">
+                    <h3 className="text-base font-mono font-bold text-white group-hover:text-[#D9DDE0] transition-colors">
                       {ev.event}
                     </h3>
                   </div>
@@ -125,10 +125,10 @@ export default function TimelinePage() {
                 </div>
 
                 <div className="flex items-center gap-2 text-xs font-mono text-white/50">
-                  <Clock className="w-3.5 h-3.5 text-[#4DEBFF]" />
+                  <Clock className="w-3.5 h-3.5 text-[#D9DDE0]" />
                   <span>{ev.date}</span>
                   <span>•</span>
-                  <MapPin className="w-3.5 h-3.5 text-[#FFB547]" />
+                  <MapPin className="w-3.5 h-3.5 text-[#C89A45]" />
                   <span>{ev.region}</span>
                 </div>
 

@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
           onClick={() => spaceAudio.playTelemetryClick()}
           className="flex items-center gap-2.5 group"
         >
-          <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 group-hover:border-[#38A8FF]/60 transition-colors">
+          <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 group-hover:border-white/50 transition-colors">
             <img 
               src="/images/edolus_logo.png" 
               alt="EDOLUS" 
@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
         <Link
           href="/dashboard"
           onClick={() => spaceAudio.playTelemetryClick()}
-          className="hover:text-[#38A8FF] transition-colors uppercase"
+          className="hover:text-[#F4F6F8] transition-colors uppercase"
         >
           DASHBOARD
         </Link>
@@ -88,17 +88,17 @@ export const Header: React.FC = () => {
         >
           <div className="flex items-end gap-[2px] h-2.5">
             <span
-              className={`w-[1.5px] bg-[#38A8FF] rounded-full transition-all duration-200 ${
+              className={`w-[1.5px] bg-[#D9DDE0] rounded-full transition-all duration-200 ${
                 isPlayingAudio ? 'h-2.5 animate-pulse' : 'h-1 opacity-40'
               }`}
             />
             <span
-              className={`w-[1.5px] bg-[#38A8FF] rounded-full transition-all duration-300 ${
+              className={`w-[1.5px] bg-[#D9DDE0] rounded-full transition-all duration-300 ${
                 isPlayingAudio ? 'h-1.5 animate-bounce' : 'h-2 opacity-40'
               }`}
             />
             <span
-              className={`w-[1.5px] bg-[#38A8FF] rounded-full transition-all duration-150 ${
+              className={`w-[1.5px] bg-[#D9DDE0] rounded-full transition-all duration-150 ${
                 isPlayingAudio ? 'h-3 animate-pulse' : 'h-1 opacity-40'
               }`}
             />
@@ -112,10 +112,10 @@ export const Header: React.FC = () => {
         <Link
           href="/dashboard"
           onClick={() => spaceAudio.playTelemetryClick()}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-[#38A8FF] hover:bg-[#2094EC] text-white text-[11px] tracking-[0.16em] font-tech uppercase font-medium transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-white hover:bg-[#E2E8F0] text-black text-[11px] tracking-[0.16em] font-tech uppercase font-bold transition-colors"
         >
           <span>ENTER PLATFORM</span>
-          <span className="text-white">→</span>
+          <span className="text-black">→</span>
         </Link>
       </div>
     </header>

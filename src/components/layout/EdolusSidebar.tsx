@@ -73,7 +73,7 @@ export const EdolusSidebar: React.FC<EdolusSidebarProps> = ({ collapsed, setColl
 
   return (
     <aside 
-      className={`fixed top-16 left-0 bottom-0 z-30 bg-[#07111F]/95 backdrop-blur-xl border-r border-[#4DEBFF]/15 transition-all duration-300 flex flex-col justify-between select-none ${
+      className={`fixed top-16 left-0 bottom-0 z-30 bg-[#07111F]/95 backdrop-blur-xl border-r border-white/10 transition-all duration-300 flex flex-col justify-between select-none ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
@@ -82,7 +82,7 @@ export const EdolusSidebar: React.FC<EdolusSidebarProps> = ({ collapsed, setColl
         {navGroups.map((g, idx) => (
           <div key={idx} className="space-y-1">
             {!collapsed && (
-              <div className="px-3 py-1 text-[10px] font-mono font-semibold tracking-widest text-[#4DEBFF]/60 uppercase">
+              <div className="px-3 py-1 text-[10px] font-mono font-semibold tracking-widest text-[#8D98A5] uppercase">
                 {g.group}
               </div>
             )}
@@ -95,12 +95,12 @@ export const EdolusSidebar: React.FC<EdolusSidebarProps> = ({ collapsed, setColl
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-mono transition-all group ${
                     isActive
-                      ? 'bg-[#2F80FF]/20 text-[#4DEBFF] border border-[#4DEBFF]/40 shadow-[0_0_15px_rgba(77,235,255,0.15)]'
+                      ? 'bg-white/10 text-white border border-white/20 shadow-sm'
                       : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
                   }`}
                   title={collapsed ? item.label : undefined}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#4DEBFF]' : 'text-white/50 group-hover:text-white'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`} />
                   {!collapsed && (
                     <span className="truncate tracking-wide">{item.label}</span>
                   )}

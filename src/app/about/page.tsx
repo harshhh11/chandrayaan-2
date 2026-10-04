@@ -7,13 +7,13 @@ import { EdolusTopNav } from '@/components/layout/EdolusTopNav';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-[#4DEBFF] selection:text-black">
+    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-white/20 selection:text-white">
       <EdolusTopNav />
 
       <main className="pt-20 pb-12 px-4 sm:px-8 max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="border-b border-white/10 pb-4 space-y-2">
-          <div className="text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
+          <div className="text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
             ISRO PROBLEM STATEMENT SIH26166 ARCHITECTURAL SPECIFICATION
           </div>
           <h1 className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-white">
@@ -28,7 +28,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#4DEBFF]">OHRC</span>
+              <span className="text-xs font-mono font-bold text-white">OHRC</span>
               <span className="text-[9px] font-mono text-white/50">0.25 m/px</span>
             </div>
             <h3 className="text-sm font-bold text-white">Optical High Resolution Camera</h3>
@@ -39,7 +39,7 @@ export default function AboutPage() {
 
           <div className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#2F80FF]">TMC-2</span>
+              <span className="text-xs font-mono font-bold text-[#D9DDE0]">TMC-2</span>
               <span className="text-[9px] font-mono text-white/50">5.0 m/px</span>
             </div>
             <h3 className="text-sm font-bold text-white">Terrain Mapping Camera-2</h3>
@@ -50,7 +50,7 @@ export default function AboutPage() {
 
           <div className="p-5 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#FFB547]">IIRS</span>
+              <span className="text-xs font-mono font-bold text-[#C89A45]">IIRS</span>
               <span className="text-[9px] font-mono text-white/50">256 Bands</span>
             </div>
             <h3 className="text-sm font-bold text-white">Imaging Infrared Spectrometer</h3>
@@ -68,7 +68,7 @@ export default function AboutPage() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
             <div className="p-3.5 bg-[#050A12] rounded-2xl border border-white/5 space-y-1">
-              <div className="text-[#FFB547] font-bold flex items-center gap-1.5">
+              <div className="text-[#C89A45] font-bold flex items-center gap-1.5">
                 <Sun className="w-4 h-4" />
                 <span>Sun-Angle Invariance (Phase Congruency)</span>
               </div>
@@ -78,8 +78,8 @@ export default function AboutPage() {
             </div>
 
             <div className="p-3.5 bg-[#050A12] rounded-2xl border border-white/5 space-y-1">
-              <div className="text-[#4DEBFF] font-bold flex items-center gap-1.5">
-                <Maximize2 className="w-4 h-4" />
+              <div className="text-white font-bold flex items-center gap-1.5">
+                <Maximize2 className="w-4 h-4 text-[#D9DDE0]" />
                 <span>Scale Invariance (Log-Polar Pyramids)</span>
               </div>
               <p className="text-white/60 font-sans leading-relaxed text-[11px]">

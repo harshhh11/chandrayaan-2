@@ -235,11 +235,7 @@ export default function CorrespondencePage() {
     setActiveStep(1);
 
     try {
-      const stepTimer = setInterval(() => {
-        setActiveStep(prev => (prev < 7 ? prev + 1 : prev));
-      }, 180);
-
-      const res = await fetch(`${apiBase}/api/correspondence/run`, {
+      const fetchPromise = fetch(`${apiBase}/api/correspondence/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -263,8 +259,15 @@ export default function CorrespondencePage() {
         })
       });
 
-      clearInterval(stepTimer);
+      // Visually step through pipeline stages with clear telemetry feedback
+      for (let s = 1; s <= 7; s++) {
+        setActiveStep(s);
+        await new Promise((r) => setTimeout(r, 220));
+      }
+
+      const res = await fetchPromise;
       setActiveStep(8);
+      await new Promise((r) => setTimeout(r, 200));
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Analysis failed to execute' }));
@@ -653,59 +656,100 @@ export default function CorrespondencePage() {
         )}
 
         {/* ========================================================
-            4. PIPELINE EXECUTION CONTROL BAR
+            4. PIPELINE EXECUTION CONTROL BAR & 8-STAGE TELEMETRY
            ======================================================== */}
-        <div className="rounded-[12px] bg-gradient-to-r from-[#07111F] to-[#0A1624] border border-[#38A8FF]/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#38A8FF]" />
-              <span className="text-sm font-tech font-bold text-[#F4F6F8] uppercase tracking-wider">
-                COMPUTER VISION CORRESPONDENCE PIPELINE
-              </span>
+        <div className="rounded-[12px] bg-gradient-to-r from-[#07111F] to-[#0A1624] border border-[#38A8FF]/30 p-5 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#38A8FF]" />
+                <span className="text-sm font-tech font-bold text-[#F4F6F8] uppercase tracking-wider">
+                  COMPUTER VISION CORRESPONDENCE PIPELINE
+                </span>
+                {isProcessing && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#38A8FF]/20 text-[#38A8FF] border border-[#38A8FF]/40 animate-pulse">
+                    STAGE {activeStep}/8 ACTIVE
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[#8D98A5] font-tech">
+                Extracts scale-space SIFT keypoints, applies Lowe's ratio test (0.78), and rejects geometric outliers via RANSAC homography.
+              </p>
             </div>
-            <p className="text-xs text-[#8D98A5] font-tech">
-              Extracts scale-space SIFT keypoints, applies Lowe's ratio test (0.78), and rejects geometric outliers via RANSAC homography.
-            </p>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={runAnalysis}
+                disabled={isProcessing || !sourceImg || !targetImg}
+                className={`px-6 py-3 rounded-xl font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2.5 shadow-lg ${
+                  isProcessing
+                    ? 'bg-white/10 text-white/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white hover:brightness-110 shadow-[0_0_25px_rgba(0,184,255,0.35)] cursor-pointer'
+                }`}
+              >
+                {isProcessing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                    <span>EXECUTING PIPELINE ({activeStep}/8)...</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>RUN CORRESPONDENCE ANALYSIS</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
+                  if (targetId) {
+                    window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
+                  } else {
+                    runAnalysis();
+                  }
+                }}
+                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-[#38A8FF]/40 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2 shadow-md cursor-pointer hover:border-[#38A8FF]"
+                title="Generate scientific report for this correspondence run"
+              >
+                <FileText className="w-4 h-4 text-[#38A8FF]" />
+                <span>GENERATE REPORT</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={runAnalysis}
-              disabled={isProcessing || !sourceImg || !targetImg}
-              className={`px-6 py-3 rounded-xl font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2.5 shadow-lg ${
-                isProcessing
-                  ? 'bg-white/10 text-white/50 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white hover:brightness-110 shadow-[0_0_25px_rgba(0,184,255,0.35)] cursor-pointer'
-              }`}
-            >
-              {isProcessing ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                  <span>ANALYZING SCENE PIXELS...</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>RUN CORRESPONDENCE ANALYSIS</span>
-                </>
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                if (targetId) {
-                  window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
-                } else {
-                  runAnalysis();
-                }
-              }}
-              className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-[#38A8FF]/40 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2 shadow-md cursor-pointer hover:border-[#38A8FF]"
-              title="Generate scientific report for this correspondence run"
-            >
-              <FileText className="w-4 h-4 text-[#38A8FF]" />
-              <span>GENERATE REPORT</span>
-            </button>
+          {/* 8-Stage Pipeline Telemetry Indicators */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 pt-3 border-t border-white/[0.08]">
+            {[
+              '1. DATA INGESTION',
+              '2. PREPROCESSING',
+              '3. SUN-ANGLE NORM',
+              '4. SCALE PYRAMIDS',
+              '5. CROSS-MODAL REP',
+              '6. DUAL MATCHING',
+              '7. RANSAC VERIFY',
+              '8. SUB-PIXEL CONF'
+            ].map((step, idx) => {
+              const isDone = activeStep > idx || (!isProcessing && analysisComplete);
+              const isCurrent = activeStep === idx + 1 && isProcessing;
+              return (
+                <div
+                  key={idx}
+                  className={`p-2.5 rounded-xl border text-[9px] font-mono transition-all text-center ${
+                    isDone
+                      ? 'bg-[#32D39A]/10 border-[#32D39A]/30 text-[#32D39A]'
+                      : isCurrent
+                      ? 'bg-[#38A8FF]/20 border-[#38A8FF] text-[#38A8FF] shadow-[0_0_15px_rgba(56,168,255,0.35)] animate-pulse'
+                      : 'bg-[#050A12] border-white/5 text-white/30'
+                  }`}
+                >
+                  <div className="font-bold truncate">{step}</div>
+                  <div className="text-[8px] opacity-80 mt-1 font-mono tracking-wider font-semibold">
+                    {isDone ? '● COMPLETE' : isCurrent ? 'RUNNING...' : 'QUEUED'}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

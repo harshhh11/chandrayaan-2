@@ -113,7 +113,7 @@ export default function ReportsPage() {
            ======================================================== */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-tech tracking-[0.16em] text-[#38A8FF] uppercase">
+            <div className="flex items-center gap-2 text-[10px] font-tech tracking-[0.16em] text-[#8D98A5] uppercase">
               <FileText className="w-3.5 h-3.5" />
               <span>ISRO CHANDRAYAAN-2 SCIENCE ARCHIVE • PEER-REVIEWED REPORT</span>
             </div>
@@ -127,7 +127,7 @@ export default function ReportsPage() {
               <select
                 value={selectedRunId}
                 onChange={(e) => handleSelectRun(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-[#0A1118] border border-white/[0.12] text-[#F4F6F8] font-mono text-xs focus:outline-none focus:border-[#38A8FF]"
+                className="px-3 py-2 rounded-xl bg-[#0A1118] border border-white/[0.12] text-[#F4F6F8] font-mono text-xs focus:outline-none focus:border-white/40"
               >
                 {runs.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -142,7 +142,7 @@ export default function ReportsPage() {
               className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white font-mono text-xs tracking-wider uppercase transition-all flex items-center gap-1.5"
               title="Print standard report"
             >
-              <Printer className="w-4 h-4 text-[#38A8FF]" />
+              <Printer className="w-4 h-4 text-[#D9DDE0]" />
               <span className="hidden sm:inline">Print</span>
             </button>
             
@@ -157,7 +157,7 @@ export default function ReportsPage() {
 
             <button
               onClick={handleDownloadPDF}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_20px_rgba(0,184,255,0.3)] hover:brightness-110 transition-all flex items-center gap-2"
+              className="px-4 py-2 rounded-xl bg-white text-black hover:bg-[#E2E8F0] font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2 shadow-sm"
               title="Download 4-page publication PDF with actual images"
             >
               <Download className="w-4 h-4" />
@@ -175,7 +175,7 @@ export default function ReportsPage() {
 
         {isLoading && (
           <div className="py-24 text-center space-y-3">
-            <RefreshCw className="w-8 h-8 text-[#38A8FF] animate-spin mx-auto" />
+            <RefreshCw className="w-8 h-8 text-white/80 animate-spin mx-auto" />
             <div className="text-sm font-mono text-white/70">Assembling peer-reviewed scientific report from database...</div>
           </div>
         )}
@@ -243,9 +243,9 @@ export default function ReportsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* SOURCE PANEL WITH KEYPOINT DOTS */}
                   <div className="space-y-2">
-                    <div className="text-xs font-mono font-bold uppercase text-[#0284C7] flex items-center justify-between">
+                    <div className="text-xs font-mono font-bold uppercase text-[#0F172A] flex items-center justify-between">
                       <span>SOURCE: {reportData.source.payload} ({reportData.source.id})</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#0284C7]/10 text-[#0284C7] font-mono">Keypoints Active</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#0F172A]/10 text-[#0F172A] font-mono">Keypoints Active</span>
                     </div>
                     <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#CBD5E1] shadow-inner relative flex items-center justify-center group">
                       <img 
@@ -317,8 +317,8 @@ export default function ReportsPage() {
                                 cx={tx <= 1.0 && tx > 0 ? tx * 1024 : tx} 
                                 cy={ty <= 1.0 && ty > 0 ? ty * 1024 : ty} 
                                 r={isInlier ? 5 : 3.5} 
-                                fill={isInlier ? '#38A8FF' : '#FF5C67'} 
-                                stroke={isInlier ? '#0A3B66' : '#6A151C'} 
+                                fill={isInlier ? '#32D39A' : '#FF5C67'} 
+                                stroke={isInlier ? '#105234' : '#6A151C'} 
                                 strokeWidth={1}
                               />
                             );
@@ -369,7 +369,7 @@ export default function ReportsPage() {
                         <td className="py-2 px-4 font-bold text-[#475569]">Spatial Resolution</td>
                         <td className="py-2 px-4">{reportData.source.resolution} m/px</td>
                         <td className="py-2 px-4">{reportData.target.resolution} m/px</td>
-                        <td className="py-2 px-4 font-bold text-[#0284C7]">{reportData.metrics.scale_ratio}× Scale Factor</td>
+                        <td className="py-2 px-4 font-bold text-[#0F172A]">{reportData.metrics.scale_ratio}× Scale Factor</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-4 font-bold text-[#475569]">Sun Elevation</td>
@@ -401,7 +401,7 @@ export default function ReportsPage() {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5 text-xs font-mono">
-                    <div className="font-bold text-[#0284C7]">Source Pipeline ({reportData.source.payload})</div>
+                    <div className="font-bold text-[#0F172A]">Source Pipeline ({reportData.source.payload})</div>
                     <div>• Dimensions: {reportData.source.width} × {reportData.source.height} → 1024 × 1024 px</div>
                     <div>• Normalization: Applied (Solar Vector Angle Compensation)</div>
                     <div>• Contrast Enhancement: CLAHE (Adaptive Tile Grid 8×8)</div>
@@ -462,7 +462,7 @@ export default function ReportsPage() {
                   </div>
                   <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
                     <span className="text-[10px] font-mono text-[#64748B] block uppercase">Registration Error</span>
-                    <span className="text-xl font-bold font-mono text-[#0284C7]">{reportData.metrics.registration_error_rmse_px} px</span>
+                    <span className="text-xl font-bold font-mono text-[#0F172A]">{reportData.metrics.registration_error_rmse_px} px</span>
                   </div>
                   <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
                     <span className="text-[10px] font-mono text-[#64748B] block uppercase">Spatial Coverage</span>
@@ -505,14 +505,14 @@ export default function ReportsPage() {
               <div className="border-t border-[#CBD5E1] pt-6 flex items-center justify-between text-xs font-mono text-[#64748B]">
                 <Link
                   href={`/correspondence?source=${reportData.source.id}&target=${reportData.target.id}`}
-                  className="flex items-center gap-1.5 text-[#0284C7] hover:underline font-bold"
+                  className="flex items-center gap-1.5 text-[#0F172A] hover:underline font-bold"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Reopen this analysis in Correspondence Workbench</span>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                  <button onClick={handleDownloadPDF} className="px-3 py-1.5 rounded bg-[#0284C7] text-white hover:bg-[#0369A1] transition-colors">
+                  <button onClick={handleDownloadPDF} className="px-3 py-1.5 rounded bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors">
                     Download PDF Report
                   </button>
                   <button onClick={handleDownloadCSV} className="px-3 py-1.5 rounded bg-[#334155] text-white hover:bg-[#1E293B] transition-colors">

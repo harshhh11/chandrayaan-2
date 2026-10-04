@@ -9,13 +9,11 @@
   --surface-primary: #05090D;
   --surface-secondary: #0A1118;
   --surface-elevated: #0D151E;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(56, 168, 255, 0.4);
+  --border-active: rgba(255, 255, 255, 0.3);
   --text-primary: #F4F6F8;
   --text-secondary: #8D98A5;
   --text-muted: #59636E;
-  --accent-blue: #38A8FF;
-  --accent-cyan: #62DDF5;
+  --accent-silver: #D9DDE0;
   --status-green: #32D39A;
   --status-warning: #E7A93B;
   --status-danger: #EF4444;
@@ -93,11 +91,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 168, 255, 0.4);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 ::selection {
-  background: rgba(56, 168, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
 

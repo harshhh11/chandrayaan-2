@@ -102,9 +102,9 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
         aria-label="Mission Alerts and Telemetry Logs"
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-[#0B1728]/90">
+        <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-[#0B131C]/90">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#38A8FF]/15 border border-[#38A8FF]/30 flex items-center justify-center text-[#38A8FF] shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0">
               <Bell className="w-4 h-4" />
             </div>
             <div>
@@ -128,7 +128,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-[10px] font-mono text-[#38A8FF] hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                className="text-[10px] font-mono text-[#8D98A5] hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors"
                 title="Mark all as acknowledged"
               >
                 Mark Read
@@ -158,7 +158,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                 className={`p-3.5 rounded-xl border transition-all ${
                   n.read
                     ? 'bg-white/[0.02] border-white/5 opacity-70 hover:opacity-100 hover:border-white/10'
-                    : 'bg-[#0B182B]/80 border-[#38A8FF]/30 shadow-[0_0_15px_rgba(56,168,255,0.08)]'
+                    : 'bg-white/[0.05] border-white/20 shadow-md'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -166,7 +166,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                     {n.type === 'SUCCESS' && <CheckCircle2 className="w-4 h-4 text-[#24D99B]" />}
                     {n.type === 'WARNING' && <AlertTriangle className="w-4 h-4 text-[#FFB547]" />}
                     {n.type === 'CRITICAL' && <AlertCircle className="w-4 h-4 text-[#FF5C67]" />}
-                    {n.type === 'INFO' && <Radio className="w-4 h-4 text-[#38A8FF]" />}
+                    {n.type === 'INFO' && <Radio className="w-4 h-4 text-white/80" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
@@ -184,7 +184,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                       <Link
                         href={n.link}
                         onClick={onClose}
-                        className="inline-flex items-center gap-1 text-[10px] font-mono text-[#38A8FF] hover:text-white hover:underline mt-2.5 transition-colors"
+                        className="inline-flex items-center gap-1 text-[10px] font-mono text-white/90 hover:text-white hover:underline mt-2.5 transition-colors"
                       >
                         <span>Open Telemetry View</span>
                         <ArrowUpRight className="w-3 h-3" />

@@ -63,8 +63,8 @@ export default function ImageDetailPage() {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
-                <Orbit className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
+                <Orbit className="w-3.5 h-3.5 text-[#D9DDE0]" />
                 <span>CHANDRAYAAN-2 OPTICAL PRODUCT METADATA</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold font-sans tracking-tight text-white mt-0.5">
@@ -76,7 +76,7 @@ export default function ImageDetailPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/correspondence"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_20px_rgba(0,184,255,0.3)] hover:brightness-110 transition-all flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-white hover:bg-[#E2E8F0] text-black font-mono text-xs font-bold tracking-wider uppercase shadow-sm transition-all flex items-center gap-2"
             >
               <GitCompare className="w-4 h-4" />
               <span>Match in Workbench</span>
@@ -85,7 +85,7 @@ export default function ImageDetailPage() {
               href="/map"
               className="px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white font-mono text-xs tracking-wider uppercase transition-all flex items-center gap-2"
             >
-              <Globe className="w-4 h-4 text-[#4DEBFF]" />
+              <Globe className="w-4 h-4 text-[#D9DDE0]" />
               <span>View Footprint</span>
             </Link>
           </div>
@@ -98,7 +98,7 @@ export default function ImageDetailPage() {
           <div className="lg:col-span-7 rounded-3xl bg-[#07111F]/90 border border-white/10 p-5 flex flex-col justify-between space-y-4">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#4DEBFF]" />
+                <Eye className="w-4 h-4 text-[#D9DDE0]" />
                 <h3 className="text-xs font-mono font-bold tracking-widest uppercase text-white">
                   FULL-FRAME RASTER INSPECTOR
                 </h3>
@@ -112,7 +112,7 @@ export default function ImageDetailPage() {
                 >
                   -
                 </button>
-                <span className="px-2 text-[#4DEBFF] font-bold">{(zoomLevel * 100).toFixed(0)}%</span>
+                <span className="px-2 text-white font-bold">{(zoomLevel * 100).toFixed(0)}%</span>
                 <button
                   onClick={() => setZoomLevel(Math.min(3, zoomLevel + 0.25))}
                   className="px-2 py-0.5 rounded text-white/60 hover:text-white hover:bg-white/10"
@@ -145,7 +145,7 @@ export default function ImageDetailPage() {
             <div className="bg-[#050A12] p-3 rounded-2xl border border-white/5">
               <div className="flex items-center justify-between text-[10px] font-mono text-white/50 mb-2">
                 <span>RADIOMETRIC INTENSITY HISTOGRAM (DN 0 - 255)</span>
-                <span className="text-[#4DEBFF]">MEAN: {((metadata?.sun_elevation || 35) * 2.8).toFixed(1)} • STD DEV: 28.4</span>
+                <span className="text-[#D9DDE0]">MEAN: {((metadata?.sun_elevation || 35) * 2.8).toFixed(1)} • STD DEV: 28.4</span>
               </div>
               <div className="h-10 flex items-end gap-[2px] opacity-80">
                 {Array.from({ length: 48 }).map((_, i) => {
@@ -153,7 +153,7 @@ export default function ImageDetailPage() {
                   return (
                     <div
                       key={i}
-                      className="flex-1 bg-gradient-to-t from-[#2F80FF] to-[#4DEBFF] rounded-t-sm"
+                      className="flex-1 bg-gradient-to-t from-[#64748B] to-[#D9DDE0] rounded-t-sm"
                       style={{ height: `${Math.max(4, h)}px` }}
                     />
                   );
@@ -169,12 +169,12 @@ export default function ImageDetailPage() {
             <div className="rounded-3xl bg-[#07111F]/90 border border-white/10 p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-[#4DEBFF]" />
+                  <Database className="w-4 h-4 text-[#D9DDE0]" />
                   <h3 className="text-xs font-mono font-bold tracking-widest uppercase text-white">
                     CALIBRATED TELEMETRY
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-[#24D99B] bg-[#24D99B]/10 px-2 py-0.5 rounded border border-[#24D99B]/30">
+                <span className="text-[10px] font-mono text-[#32D39A] bg-[#32D39A]/10 px-2 py-0.5 rounded border border-[#32D39A]/30">
                   {dataset?.processing_level || 'LEVEL-2'} PRODUCT
                 </span>
               </div>
@@ -198,11 +198,11 @@ export default function ImageDetailPage() {
                 </div>
                 <div className="bg-[#050A12] p-3 rounded-xl border border-white/5">
                   <span className="text-white/40 block text-[9px]">Solar Elevation</span>
-                  <span className="text-[#FFB547] font-bold">{metadata?.sun_elevation !== undefined ? `${metadata.sun_elevation}°` : '28.4°'}</span>
+                  <span className="text-[#C89A45] font-bold">{metadata?.sun_elevation !== undefined ? `${metadata.sun_elevation}°` : '28.4°'}</span>
                 </div>
                 <div className="bg-[#050A12] p-3 rounded-xl border border-white/5">
                   <span className="text-white/40 block text-[9px]">Solar Azimuth</span>
-                  <span className="text-[#FFB547] font-bold">{metadata?.sun_azimuth !== undefined ? `${metadata.sun_azimuth}°` : '65.2°'}</span>
+                  <span className="text-[#C89A45] font-bold">{metadata?.sun_azimuth !== undefined ? `${metadata.sun_azimuth}°` : '65.2°'}</span>
                 </div>
               </div>
 
@@ -210,7 +210,7 @@ export default function ImageDetailPage() {
               <div className="bg-[#050A12] p-3.5 rounded-2xl border border-white/5 flex items-center justify-between">
                 <div className="text-[11px] font-mono">
                   <div className="text-white font-bold flex items-center gap-1.5 text-xs">
-                    <Sun className="w-3.5 h-3.5 text-[#FFB547]" />
+                    <Sun className="w-3.5 h-3.5 text-[#C89A45]" />
                     <span>SOLAR ILLUMINATION VECTOR</span>
                   </div>
                   <div className="text-white/50 text-[10px] mt-0.5">
@@ -218,9 +218,9 @@ export default function ImageDetailPage() {
                   </div>
                 </div>
 
-                <div className="w-12 h-12 rounded-full border border-dashed border-[#FFB547]/40 relative flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full border border-dashed border-[#C89A45]/40 relative flex items-center justify-center">
                   <div 
-                    className="w-1 h-5 bg-[#FFB547] rounded-full origin-bottom absolute bottom-6"
+                    className="w-1 h-5 bg-[#C89A45] rounded-full origin-bottom absolute bottom-6"
                     style={{ transform: `rotate(${metadata?.sun_azimuth !== undefined ? metadata.sun_azimuth : 65.2}deg)` }}
                   />
                   <span className="text-[8px] font-mono text-white/40 absolute top-0.5">N</span>
@@ -238,7 +238,7 @@ export default function ImageDetailPage() {
                 {candidatePairs.map((c: any, idx: number) => (
                   <div
                     key={c.id || idx}
-                    className="p-3 rounded-2xl bg-[#050A12] border border-white/5 hover:border-[#4DEBFF]/30 transition-all flex items-center justify-between"
+                    className="p-3 rounded-2xl bg-[#050A12] border border-white/5 hover:border-white/30 transition-all flex items-center justify-between"
                   >
                     <div>
                       <div className="text-xs font-mono font-bold text-white flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function ImageDetailPage() {
 
                     <Link
                       href="/correspondence"
-                      className="px-3 py-1.5 rounded-lg bg-[#2F80FF]/20 hover:bg-[#2F80FF]/40 text-[#4DEBFF] text-[10px] font-mono font-bold transition-colors flex items-center gap-1"
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-mono font-bold transition-colors flex items-center gap-1"
                     >
                       <span>Match</span>
                       <ChevronRight className="w-3 h-3" />

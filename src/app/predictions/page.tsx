@@ -46,14 +46,14 @@ export default function PredictionsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-[#4DEBFF] selection:text-black">
+    <div className="min-h-screen bg-[#050A12] text-white font-sans selection:bg-white/20 selection:text-white">
       <EdolusTopNav />
 
       <main className="pt-20 pb-12 px-4 sm:px-8 max-w-[1920px] mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
-            <div className="text-[10px] font-mono tracking-widest text-[#4DEBFF] uppercase">
+            <div className="text-[10px] font-mono tracking-widest text-[#8D98A5] uppercase">
               CHANDRAYAAN-2 ORBITAL PROPAGATION & ACQUISITION PLANNING
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-sans tracking-tight text-white mt-0.5">
@@ -65,10 +65,10 @@ export default function PredictionsPage() {
         {/* Prediction Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {predictionEvents.map(p => (
-            <div key={p.id} className="p-6 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-4 hover:border-[#4DEBFF]/40 transition-all shadow-xl">
+            <div key={p.id} className="p-6 rounded-3xl bg-[#07111F]/90 border border-white/10 space-y-4 hover:border-white/30 transition-all shadow-xl">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <span className="text-xs font-mono font-bold text-white">{p.target}</span>
-                <span className="text-[10px] font-mono text-[#24D99B] bg-[#24D99B]/10 px-2 py-0.5 rounded border border-[#24D99B]/30">
+                <span className="text-[10px] font-mono text-[#32D39A] bg-[#32D39A]/10 px-2 py-0.5 rounded border border-[#32D39A]/30">
                   {p.status}
                 </span>
               </div>
@@ -80,11 +80,11 @@ export default function PredictionsPage() {
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                   <span>Acquisition Pass:</span>
-                  <span className="text-[#4DEBFF] font-bold">{p.countdown}</span>
+                  <span className="text-[#D9DDE0] font-bold">{p.countdown}</span>
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                   <span>Predicted Solar Elev:</span>
-                  <span className="text-[#FFB547] font-bold">{p.solar_elevation}</span>
+                  <span className="text-[#C89A45] font-bold">{p.solar_elevation}</span>
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                   <span>Payload Allocation:</span>
@@ -94,7 +94,7 @@ export default function PredictionsPage() {
 
               <Link
                 href="/correspondence"
-                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-[#2F80FF]/20 text-[#4DEBFF] border border-white/10 hover:border-[#4DEBFF]/40 text-xs font-mono text-center tracking-wider block transition-all"
+                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white border border-white/10 hover:border-white/30 text-xs font-mono text-center tracking-wider block transition-all font-bold"
               >
                 Simulate Target Match →
               </Link>

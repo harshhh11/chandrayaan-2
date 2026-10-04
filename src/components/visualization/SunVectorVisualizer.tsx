@@ -71,9 +71,9 @@ export const SunVectorVisualizer: React.FC<SunVectorVisualizerProps> = ({
               E (90°)
             </text>
 
-            {/* Source Sun Vector (Cyan Arrow) */}
-            <line x1={cx} y1={cy} x2={srcX} y2={srcY} stroke="#00C8FF" strokeWidth="2" />
-            <circle cx={srcX} cy={srcY} r="3.5" fill="#00C8FF" />
+            {/* Source Sun Vector (Silver/White Arrow) */}
+            <line x1={cx} y1={cy} x2={srcX} y2={srcY} stroke="#F8FAFC" strokeWidth="2" />
+            <circle cx={srcX} cy={srcY} r="3.5" fill="#F8FAFC" />
 
             {/* Reference Sun Vector (Amber Arrow) */}
             <line x1={cx} y1={cy} x2={refX} y2={refY} stroke="#F59E0B" strokeWidth="2" strokeDasharray="3,3" />
@@ -84,7 +84,7 @@ export const SunVectorVisualizer: React.FC<SunVectorVisualizerProps> = ({
         {/* Angular Numerical Breakdowns */}
         <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-[10px] w-full">
           <div>
-            <div className="text-[#00C8FF] font-bold">SOURCE SUN</div>
+            <div className="text-white font-bold">SOURCE SUN</div>
             <div className="text-white/70">AZ: {sourceSun.azimuth_deg.toFixed(1)}°</div>
             <div className="text-white/50">EL: {sourceSun.elevation_deg.toFixed(1)}°</div>
           </div>

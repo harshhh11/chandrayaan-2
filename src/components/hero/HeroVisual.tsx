@@ -128,8 +128,8 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({ mouseX, mouseY, scrollPr
         className="absolute inset-0 w-full h-full opacity-60 pointer-events-none mix-blend-screen"
       />
 
-      {/* LAYER 03: Lunar Horizon Rim & Cyan Accent Glow */}
-      <div className="absolute -bottom-[20%] right-[-10%] w-[120vw] h-[70vh] rounded-[100%] bg-gradient-to-t from-[#00C8FF]/12 via-[#004488]/5 to-transparent blur-[80px] pointer-events-none" />
+      {/* LAYER 03: Lunar Horizon Rim & Neutral Accent Glow */}
+      <div className="absolute -bottom-[20%] right-[-10%] w-[120vw] h-[70vh] rounded-[100%] bg-gradient-to-t from-white/[0.04] via-transparent to-transparent blur-[80px] pointer-events-none" />
 
       {/* LAYER 04: Cinematic Space Visual — Chandrayaan-2 Video Orbiting the Moon */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -167,8 +167,8 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({ mouseX, mouseY, scrollPr
       <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#05070a] to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,#05070a_100%)] pointer-events-none opacity-60" />
 
-      {/* LAYER 06: Atmospheric Blue Accent Light from Horizon */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-[#00C8FF]/10 via-transparent to-transparent mix-blend-screen pointer-events-none" />
+      {/* LAYER 06: Atmospheric Neutral Subtle Accent Light */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.03] via-transparent to-transparent mix-blend-screen pointer-events-none" />
     </div>
   );
 };

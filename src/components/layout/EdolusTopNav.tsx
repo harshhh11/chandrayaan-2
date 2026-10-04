@@ -34,7 +34,7 @@ export const EdolusTopNav: React.FC = () => {
         {/* Left: EDOLUS Brand Monogram & Return to Landing Page */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 group" title="Return to Landing Page (Home)">
-            <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 group-hover:border-[#38A8FF]/60 transition-colors">
+            <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 group-hover:border-white/50 transition-colors">
               <img 
                 src="/images/edolus_logo.png" 
                 alt="EDOLUS" 
@@ -56,7 +56,7 @@ export const EdolusTopNav: React.FC = () => {
           {/* Direct link back to Landing Page */}
           <Link
             href="/"
-            className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-[6px] border border-white/[0.08] hover:border-[#38A8FF]/40 bg-white/[0.02] hover:bg-[#38A8FF]/10 text-[10px] font-tech tracking-wider text-[#8D98A5] hover:text-[#38A8FF] transition-all"
+            className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-[6px] border border-white/[0.08] hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.08] text-[10px] font-tech tracking-wider text-[#8D98A5] hover:text-[#F4F6F8] transition-all"
             title="Return to Landing Page"
           >
             <span>←</span>
@@ -81,7 +81,7 @@ export const EdolusTopNav: React.FC = () => {
               >
                 {item.label}
                 {isActive && (
-                  <span className="absolute -bottom-3.5 left-0 right-0 h-[2px] bg-[#38A8FF] shadow-[0_0_8px_rgba(56,168,255,0.6)]" />
+                  <span className="absolute -bottom-3.5 left-0 right-0 h-[2px] bg-white" />
                 )}
               </Link>
             );
@@ -119,7 +119,7 @@ export const EdolusTopNav: React.FC = () => {
             onClick={() => setNotificationsOpen(!notificationsOpen)}
             className={`relative p-1.5 rounded-[6px] transition-colors ${
               notificationsOpen 
-                ? 'text-[#38A8FF] bg-[#38A8FF]/15 border border-[#38A8FF]/40' 
+                ? 'text-white bg-white/10 border border-white/20' 
                 : 'text-[#8D98A5] hover:text-[#F4F6F8] hover:bg-white/[0.04]'
             }`}
             title="Notifications (Mission Alerts & Telemetry)"
@@ -130,7 +130,7 @@ export const EdolusTopNav: React.FC = () => {
 
           {/* Clean ISRO Specialist Avatar */}
           <div 
-            className="w-6 h-6 rounded-full bg-[#0D151E] border border-[#38A8FF]/40 flex items-center justify-center text-[10px] font-bold text-[#F4F6F8] font-tech hover:border-[#38A8FF] transition-colors cursor-pointer"
+            className="w-6 h-6 rounded-full bg-[#0D151E] border border-white/20 flex items-center justify-center text-[10px] font-bold text-[#F4F6F8] font-tech hover:border-white/50 transition-colors cursor-pointer"
             title="ISRO Operator"
           >
             IS
