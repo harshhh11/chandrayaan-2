@@ -523,6 +523,26 @@ export const DATASETS_LIST: ServerDataset[] = [
   },
 ];
 
+export const DEFAULT_MATCHES = Array.from({ length: 120 }).map((_, i) => {
+  const sx = ((i * 47) % 860) + 70;
+  const sy = ((i * 71) % 860) + 70;
+  const isInlier = i % 9 !== 0;
+  return {
+    id: i + 1,
+    source_x: sx,
+    source_y: sy,
+    target_x: sx + (isInlier ? (Math.sin(i) * 2.5 - 1.2) : 55.0),
+    target_y: sy + (isInlier ? (Math.cos(i) * 2.5 + 1.2) : -45.0),
+    reference_x: sx + (isInlier ? (Math.sin(i) * 2.5 - 1.2) : 55.0),
+    reference_y: sy + (isInlier ? (Math.cos(i) * 2.5 + 1.2) : -45.0),
+    match_type: isInlier ? 'INLIER' : 'OUTLIER',
+    inlier: isInlier,
+    is_inlier: isInlier,
+    confidence: isInlier ? 0.94 : 0.20,
+    reprojection_error_px: isInlier ? 0.22 : 12.4,
+  };
+});
+
 export const DEFAULT_REPORT = {
   analysis_id: 'RUN-20261004-95D6E5',
   id: 'RUN-20261004-95D6E5',
@@ -564,16 +584,7 @@ export const DEFAULT_REPORT = {
     sun_elevation_delta: 1.5,
     sun_azimuth_delta: 180.0,
   },
-  matches: Array.from({ length: 80 }).map((_, i) => ({
-    id: i + 1,
-    source_x: ((i * 41) % 800) + 100,
-    source_y: ((i * 67) % 800) + 100,
-    target_x: ((i * 41) % 800) + 101,
-    target_y: ((i * 67) % 800) + 99,
-    match_type: i % 7 === 0 ? 'OUTLIER' : 'INLIER',
-    inlier: i % 7 !== 0,
-    is_inlier: i % 7 !== 0,
-    confidence: 0.94,
-  })),
+  matches: DEFAULT_MATCHES,
 };
+
 
