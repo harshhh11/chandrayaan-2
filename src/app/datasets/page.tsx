@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { EdolusShell } from '@/components/layout/EdolusShell';
 
+import { DATASETS_LIST } from '@/lib/serverDatasets';
+
 interface DatasetRecord {
   id: string;
   product_id?: string;
@@ -33,10 +35,10 @@ interface DatasetRecord {
 }
 
 export default function DatasetsPage() {
-  const [datasets, setDatasets] = useState<DatasetRecord[]>([]);
+  const [datasets, setDatasets] = useState<DatasetRecord[]>(DATASETS_LIST);
   const [selectedSensor, setSelectedSensor] = useState<'ALL' | 'OHRC' | 'TMC-2' | 'IIRS'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [scanning, setScanning] = useState(false);
   
   // Modals State
@@ -61,10 +63,17 @@ export default function DatasetsPage() {
       const res = await fetch(`${apiBase}/api/datasets`);
       if (res.ok) {
         const data = await res.json();
-        setDatasets(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setDatasets(data);
+        } else {
+          setDatasets(DATASETS_LIST);
+        }
+      } else {
+        setDatasets(DATASETS_LIST);
       }
     } catch (e) {
       console.error('Failed to load datasets:', e);
+      setDatasets(DATASETS_LIST);
     } finally {
       setLoading(false);
     }

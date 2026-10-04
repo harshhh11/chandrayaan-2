@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { EdolusShell } from '@/components/layout/EdolusShell';
 
+import { DATASETS_LIST } from '@/lib/serverDatasets';
+
 interface DatasetOption {
   id: string;
   product_id?: string;
@@ -28,9 +30,9 @@ interface DatasetOption {
 }
 
 export default function CorrespondencePage() {
-  const [datasets, setDatasets] = useState<DatasetOption[]>([]);
-  const [sourceImg, setSourceImg] = useState<DatasetOption | null>(null);
-  const [targetImg, setTargetImg] = useState<DatasetOption | null>(null);
+  const [datasets, setDatasets] = useState<DatasetOption[]>(DATASETS_LIST as DatasetOption[]);
+  const [sourceImg, setSourceImg] = useState<DatasetOption | null>(DATASETS_LIST[0] as DatasetOption);
+  const [targetImg, setTargetImg] = useState<DatasetOption | null>((DATASETS_LIST[1] || DATASETS_LIST[0]) as DatasetOption);
   
   // Pipeline Processing State
   const [isProcessing, setIsProcessing] = useState(false);
