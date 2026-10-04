@@ -95,12 +95,16 @@ export default function ReportsPage() {
 
   const handleDownloadPDF = () => {
     if (!selectedRunId) return;
-    window.open(`${apiBase}/api/reports/${selectedRunId}/pdf`, '_blank');
+    const srcId = src?.id || '';
+    const tgtId = tgt?.id || '';
+    window.open(`${apiBase}/api/reports/${selectedRunId}/pdf?source=${srcId}&target=${tgtId}`, '_blank');
   };
 
   const handleDownloadCSV = () => {
     if (!selectedRunId) return;
-    window.open(`${apiBase}/api/reports/${selectedRunId}/csv`, '_blank');
+    const srcId = src?.id || '';
+    const tgtId = tgt?.id || '';
+    window.open(`${apiBase}/api/reports/${selectedRunId}/csv?source=${srcId}&target=${tgtId}`, '_blank');
   };
 
   const src = reportData?.source || DEFAULT_REPORT.source;
@@ -252,7 +256,7 @@ export default function ReportsPage() {
                     </div>
                     <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#CBD5E1] shadow-inner relative flex items-center justify-center group">
                       <img 
-                        src="/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png" 
+                        src={src.image_url || reportData.artifacts?.source_keypoints_url || '/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png'} 
                         alt="Source observation with keypoints"
                         className="w-full h-full object-cover"
                       />
@@ -296,7 +300,7 @@ export default function ReportsPage() {
                     </div>
                     <div className="aspect-square bg-black rounded-lg overflow-hidden border border-[#CBD5E1] shadow-inner relative flex items-center justify-center group">
                       <img 
-                        src="/images/ch2_ohr_ncp_20220310T061500_d_img_d18.png" 
+                        src={tgt.image_url || reportData.artifacts?.target_keypoints_url || '/images/ch2_ohr_ncp_20220310T061500_d_img_d18.png'} 
                         alt="Target observation with keypoints"
                         className="w-full h-full object-cover"
                       />
