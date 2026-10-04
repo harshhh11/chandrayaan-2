@@ -1,40 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DATASETS_LIST } from '@/lib/serverDatasets';
+import { computeCorrespondence } from '@/lib/correspondenceEngine';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const decodedId = decodeURIComponent(id);
+  const decodedId = decodeURIComponent(id || '').trim();
 
-  // Generate deterministic synthetic correspondence tie points for visualization
-  const matches = [];
-  const total = 120;
-  for (let i = 0; i < total; i++) {
-    const sx = ((i * 37) % 800) + 100;
-    const sy = ((i * 59) % 800) + 100;
-    const isInlier = i % 8 !== 0;
-    const tx = sx + (isInlier ? (Math.sin(i) * 3 - 1.5) : 48.0);
-    const ty = sy + (isInlier ? (Math.cos(i) * 3 + 1.5) : -42.0);
-
-    matches.push({
-      id: i + 1,
-      source_x: sx,
-      source_y: sy,
-      target_x: tx,
-      target_y: ty,
-      reference_x: tx,
-      reference_y: ty,
-      match_type: isInlier ? 'INLIER' : 'OUTLIER',
-      inlier: isInlier,
-      is_inlier: isInlier,
-      confidence: isInlier ? 0.88 + ((i % 12) * 0.01) : 0.22,
-      reprojection_error_px: isInlier ? 0.18 + ((i % 10) * 0.02) : 11.8,
-    });
-  }
-
-  const verifiedInliers = matches.filter(m => m.inlier).length;
-  const outliers = matches.length - verifiedInliers;
+  // Find dataset reference from ID or default
+  const src = DATASETS_LIST[0];
+  const tgt = DATASETS_LIST[1] || DATASETS_LIST[0];
+  const result = computeCorrespondence(src, tgt);
 
   return NextResponse.json({
     analysis_id: decodedId,
@@ -42,49 +20,51 @@ export async function GET(
     title: `Chandrayaan-2 Planetary Correspondence Report — ${decodedId}`,
     created_at: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
     algorithm: 'LoFTR Deep Planetary Transformer + Pyramidal Wallis + RANSAC',
-    classification: 'HIGH PRECISION SCIENTIFIC CORRESPONDENCE',
-    confidence: 98.4,
+    classification: result.classification,
+    confidence: result.metrics.confidence,
+    is_overlapping: result.isOverlapping,
+    warning: result.warning,
     source: {
-      id: 'ch2_ohr_ncp_20220324T184000_d_img_d18',
-      payload: 'OHRC',
-      region: 'Tycho Crater Rim (South Polar)',
-      resolution: 0.25,
-      sun_elevation: 30.5,
-      sun_azimuth: 265.0,
-      acquisition: '2022-03-24T18:40:00Z',
-      width: 2048,
-      height: 2048,
+      id: src.id,
+      payload: src.instrument,
+      region: src.region,
+      resolution: src.gsd_m,
+      sun_elevation: src.sun_elevation,
+      sun_azimuth: src.sun_azimuth,
+      acquisition: src.acquisition,
+      width: src.width || 2048,
+      height: src.height || 2048,
     },
     target: {
-      id: 'ch2_ohr_ncp_20220310T061500_d_img_d18',
-      payload: 'OHRC',
-      region: 'Tycho Crater Rim (South Polar)',
-      resolution: 0.25,
-      sun_elevation: 32.0,
-      sun_azimuth: 85.0,
-      acquisition: '2022-03-10T06:15:00Z',
-      width: 2048,
-      height: 2048,
+      id: tgt.id,
+      payload: tgt.instrument,
+      region: tgt.region,
+      resolution: tgt.gsd_m,
+      sun_elevation: tgt.sun_elevation,
+      sun_azimuth: tgt.sun_azimuth,
+      acquisition: tgt.acquisition,
+      width: tgt.width || 2048,
+      height: tgt.height || 2048,
     },
     metrics: {
-      verified_inliers: verifiedInliers,
-      outliers: outliers,
-      total_candidates: matches.length,
-      inlier_ratio_pct: Math.round((verifiedInliers / matches.length) * 100),
-      registration_error_rmse_px: 0.38,
-      spatial_coverage_pct: 94.2,
-      scale_ratio: 1.0,
-      sun_elevation_delta: 1.5,
-      sun_azimuth_delta: 180.0,
+      verified_inliers: result.metrics.verified_inliers,
+      outliers: result.metrics.outliers,
+      total_candidates: result.metrics.total_matches,
+      inlier_ratio_pct: result.metrics.inlier_ratio_pct,
+      registration_error_rmse_px: result.metrics.rmse_px,
+      spatial_coverage_pct: result.metrics.spatial_coverage_pct,
+      scale_ratio: result.scaleRatio,
+      sun_elevation_delta: result.sunElevationDelta,
+      sun_azimuth_delta: result.sunAzimuthDelta,
     },
-    matches: matches,
+    matches: result.matches,
     artifacts: {
-      source_keypoints_url: '/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png',
-      target_keypoints_url: '/images/ch2_ohr_ncp_20220310T061500_d_img_d18.png',
-      correspondence_plot_url: '/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png',
-      registered_image_url: '/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png',
-      difference_map_url: '/images/ch2_ohr_ncp_20220310T061500_d_img_d18.png',
-      blend_overlay_url: '/images/ch2_ohr_ncp_20220324T184000_d_img_d18.png',
+      source_keypoints_url: src.image_url,
+      target_keypoints_url: tgt.image_url,
+      correspondence_plot_url: src.image_url,
+      registered_image_url: src.image_url,
+      difference_map_url: tgt.image_url,
+      blend_overlay_url: src.image_url,
     },
   });
 }

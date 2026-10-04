@@ -12,6 +12,7 @@ import {
 import { EdolusShell } from '@/components/layout/EdolusShell';
 
 import { DATASETS_LIST, DEFAULT_MATCHES } from '@/lib/serverDatasets';
+import { computeCorrespondence } from '@/lib/correspondenceEngine';
 
 interface DatasetOption {
   id: string;
@@ -27,6 +28,8 @@ interface DatasetOption {
   acquisition: string;
   width?: number;
   height?: number;
+  lat?: number;
+  lon?: number;
 }
 
 export default function CorrespondencePage() {
@@ -80,6 +83,27 @@ export default function CorrespondencePage() {
   const [isUploading, setIsUploading] = useState(false);
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+
+  // Dynamically recalculate correspondence tie-points whenever images or matcher settings change
+  useEffect(() => {
+    if (!sourceImg || !targetImg) return;
+    const res = computeCorrespondence(sourceImg, targetImg, {
+      matcher_type: matcherType,
+      sun_norm: sunNormMode,
+    });
+    setMatches(res.matches);
+    setMetrics(res.metrics);
+    setActiveJobId(res.jobId);
+    if (res.warning) {
+      setErrorMessage(res.warning);
+    } else {
+      setErrorMessage(null);
+    }
+    setRegisteredImageUrl(res.artifacts.registered_image_url);
+    setBlendImageUrl(res.artifacts.blend_image_url);
+    setDiffImageUrl(res.artifacts.difference_image_url);
+    setAnalysisComplete(true);
+  }, [sourceImg?.id, targetImg?.id, matcherType, sunNormMode]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isTarget: boolean) => {
     const file = e.target.files?.[0];
@@ -438,9 +462,37 @@ export default function CorrespondencePage() {
         </div>
 
         {errorMessage && (
-          <div className="p-4 rounded-xl bg-[#FF5C67]/10 border border-[#FF5C67]/30 text-[#FF5C67] text-xs font-mono flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMessage}</span>
+          <div className="p-4 rounded-xl bg-[#FF5C67]/10 border border-[#FF5C67]/30 text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-2.5 text-[#FF5C67]">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{errorMessage}</span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  const s = datasets.find(d => d.id === 'ch2_ohr_ncp_20220324T184000_d_img_d18') || datasets[0];
+                  const t = datasets.find(d => d.id === 'ch2_ohr_ncp_20220310T061500_d_img_d18') || datasets[1];
+                  setSourceImg(s);
+                  setTargetImg(t);
+                }}
+                className="px-2.5 py-1 rounded bg-[#38A8FF]/20 hover:bg-[#38A8FF]/30 text-[#38A8FF] border border-[#38A8FF]/40 text-[10px] font-mono cursor-pointer transition-colors"
+              >
+                Load Tycho Pair (OHRC ↔ OHRC)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const s = datasets.find(d => d.id === 'ch2_ohr_ncp_20191015T041200_d_img_d18') || datasets[0];
+                  const t = datasets.find(d => d.id === 'ch2_tmc_ncn_20200411T093000_d_img_d18') || datasets[1];
+                  setSourceImg(s);
+                  setTargetImg(t);
+                }}
+                className="px-2.5 py-1 rounded bg-[#32D39A]/20 hover:bg-[#32D39A]/30 text-[#32D39A] border border-[#32D39A]/40 text-[10px] font-mono cursor-pointer transition-colors"
+              >
+                Load Boguslawsky (OHRC ↔ TMC-2)
+              </button>
+            </div>
           </div>
         )}
 
