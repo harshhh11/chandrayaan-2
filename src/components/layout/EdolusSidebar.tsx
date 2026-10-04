@@ -39,8 +39,9 @@ export const EdolusSidebar: React.FC<EdolusSidebarProps> = ({ collapsed, setColl
     {
       group: 'CORRESPONDENCE',
       items: [
-        { label: 'New Analysis', href: '/correspondence', icon: Crosshair },
-        { label: 'Image Matching', href: '/correspondence', icon: GitCompare },
+        { label: 'Correspondence Lab', href: '/correspondence', icon: Crosshair },
+        { label: 'Invariance Lab', href: '/invariance', icon: Sun },
+        { label: 'Benchmark Suite', href: '/benchmark', icon: Cpu },
         { label: 'Registration', href: '/register', icon: RotateCw },
         { label: 'Match History', href: '/jobs', icon: History },
       ]
@@ -48,10 +49,11 @@ export const EdolusSidebar: React.FC<EdolusSidebarProps> = ({ collapsed, setColl
     {
       group: 'ANALYSIS',
       items: [
-        { label: 'Sun Angle Normalization', href: '/analysis#sun-angle', icon: Sun },
+        { label: 'Invariance Engine', href: '/invariance', icon: Sun },
+        { label: 'Cross-Modal Benchmarks', href: '/benchmark', icon: Cpu },
+        { label: 'Sun Angle Analysis', href: '/analysis#sun-angle', icon: Sun },
         { label: 'Scale-Invariant Analysis', href: '/analysis#scale', icon: Maximize2 },
-        { label: 'Multi-Modal Benchmarks', href: '/analytics', icon: Cpu },
-        { label: 'Feature Correspondence', href: '/match', icon: Crosshair },
+        { label: 'Mission Analytics', href: '/analytics', icon: Activity },
       ]
     },
     {

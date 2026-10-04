@@ -18,6 +18,8 @@ export const EdolusTopNav: React.FC = () => {
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Datasets', href: '/datasets' },
     { label: 'Correspondence', href: '/correspondence' },
+    { label: 'Invariance Lab', href: '/invariance' },
+    { label: 'Benchmark', href: '/benchmark' },
     { label: 'Reports', href: '/reports' },
     { label: '3D Viewer', href: '/3d' },
     { label: 'Analytics', href: '/analytics' },
