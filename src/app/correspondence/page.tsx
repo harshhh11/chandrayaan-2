@@ -768,12 +768,10 @@ export default function CorrespondencePage() {
 
               <button
                 onClick={() => {
-                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                  if (targetId) {
-                    window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
-                  } else {
-                    runAnalysis();
-                  }
+                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                  const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                  const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                  window.open(`${apiBase}/api/reports/${targetId}/pdf?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
                 }}
                 className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-[#38A8FF]/40 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-2 shadow-md cursor-pointer hover:border-[#38A8FF]"
                 title="Generate scientific report for this correspondence run"
@@ -836,12 +834,10 @@ export default function CorrespondencePage() {
               {/* Direct Generate Report Button in Header */}
               <button
                 onClick={() => {
-                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                  if (targetId) {
-                    window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
-                  } else {
-                    runAnalysis();
-                  }
+                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                  const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                  const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                  window.open(`${apiBase}/api/reports/${targetId}/pdf?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
                 }}
                 className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white font-mono text-[11px] font-black tracking-wider uppercase shadow-[0_0_15px_rgba(0,184,255,0.4)] hover:brightness-110 flex items-center gap-1.5 transition-all cursor-pointer"
                 title="Download 4-page scientific report PDF"
@@ -851,7 +847,7 @@ export default function CorrespondencePage() {
               </button>
 
               <Link
-                href={activeJobId ? `/reports?id=${activeJobId}` : (historyRuns.length > 0 ? `/reports?id=${historyRuns[0].id}` : '/reports')}
+                href={activeJobId ? `/reports?id=${activeJobId}&source=${sourceImg?.id || ''}&target=${targetImg?.id || ''}` : (historyRuns.length > 0 ? `/reports?id=${historyRuns[0].id}` : '/reports')}
                 className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white font-mono text-[11px] tracking-wider uppercase border border-white/10 flex items-center gap-1.5 transition-all"
                 title="View full report dossier"
               >
@@ -1070,12 +1066,10 @@ export default function CorrespondencePage() {
             <div className="flex flex-wrap items-center gap-2.5 shrink-0">
               <button
                 onClick={() => {
-                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                  if (targetId) {
-                    window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
-                  } else {
-                    runAnalysis();
-                  }
+                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                  const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                  const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                  window.open(`${apiBase}/api/reports/${targetId}/pdf?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
                 }}
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2F80FF] to-[#00B8FF] text-white font-mono text-xs font-black tracking-wider uppercase shadow-[0_0_20px_rgba(0,184,255,0.4)] hover:brightness-110 flex items-center gap-2 transition-all cursor-pointer"
               >
@@ -1085,8 +1079,10 @@ export default function CorrespondencePage() {
 
               <button
                 onClick={() => {
-                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                  if (targetId) window.open(`${apiBase}/api/reports/${targetId}/csv`, '_blank');
+                  const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                  const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                  const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                  window.open(`${apiBase}/api/reports/${targetId}/csv?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
                 }}
                 className="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-mono text-xs tracking-wider uppercase border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
               >
@@ -1095,7 +1091,7 @@ export default function CorrespondencePage() {
               </button>
 
               <Link
-                href={activeJobId ? `/reports?id=${activeJobId}` : (historyRuns.length > 0 ? `/reports?id=${historyRuns[0].id}` : '/reports')}
+                href={activeJobId ? `/reports?id=${activeJobId}&source=${sourceImg?.id || ''}&target=${targetImg?.id || ''}` : (historyRuns.length > 0 ? `/reports?id=${historyRuns[0].id}` : '/reports')}
                 className="px-3.5 py-2.5 rounded-xl bg-[#A78BFA]/10 hover:bg-[#A78BFA]/20 text-[#A78BFA] font-mono text-xs font-bold tracking-wider uppercase border border-[#A78BFA]/30 flex items-center gap-1.5 transition-all"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -1214,8 +1210,10 @@ export default function CorrespondencePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <button
               onClick={() => {
-                const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                if (targetId) window.open(`${apiBase}/api/reports/${targetId}/pdf`, '_blank');
+                const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                window.open(`${apiBase}/api/reports/${targetId}/pdf?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
               }}
               className="p-4 rounded-xl bg-gradient-to-r from-[#2F80FF]/20 to-[#00B8FF]/20 hover:from-[#2F80FF]/30 hover:to-[#00B8FF]/30 border border-[#38A8FF]/40 text-left transition-all group cursor-pointer"
             >
@@ -1229,8 +1227,10 @@ export default function CorrespondencePage() {
 
             <button
               onClick={() => {
-                const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : '');
-                if (targetId) window.open(`${apiBase}/api/reports/${targetId}/csv`, '_blank');
+                const targetId = activeJobId || (historyRuns.length > 0 ? historyRuns[0].id : 'RUN-20261004-95D6E5');
+                const srcId = sourceImg?.id || 'ch2_ohr_ncp_20220324T184000_d_img_d18';
+                const tgtId = targetImg?.id || 'ch2_ohr_ncp_20220310T061500_d_img_d18';
+                window.open(`${apiBase}/api/reports/${targetId}/csv?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
               }}
               className="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left transition-all group cursor-pointer"
             >
@@ -1243,7 +1243,7 @@ export default function CorrespondencePage() {
             </button>
 
             <Link
-              href={activeJobId ? `/reports?id=${activeJobId}` : '/reports'}
+              href={activeJobId ? `/reports?id=${activeJobId}&source=${sourceImg?.id || ''}&target=${targetImg?.id || ''}` : '/reports'}
               className="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left transition-all group cursor-pointer block"
             >
               <div className="flex items-center justify-between mb-2">

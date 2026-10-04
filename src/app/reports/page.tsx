@@ -35,26 +35,40 @@ export default function ReportsPage() {
       }
 
       let targetId = 'RUN-20261004-95D6E5';
+      let srcParam: string | null = null;
+      let tgtParam: string | null = null;
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const qId = params.get('id');
         if (qId) targetId = qId;
+        srcParam = params.get('source');
+        tgtParam = params.get('target');
       }
 
       setSelectedRunId(targetId);
-      await loadReport(targetId);
+      await loadReport(targetId, srcParam, tgtParam);
     } catch {
       // Keep DEFAULT_REPORT active
     }
   };
 
-  const loadReport = async (runId: string) => {
+  const loadReport = async (runId: string, customSrc?: string | null, customTgt?: string | null) => {
     setIsLoading(true);
     setFetchError(null);
     try {
+      let queryStr = '';
+      if (customSrc && customTgt) {
+        queryStr = `?source=${encodeURIComponent(customSrc)}&target=${encodeURIComponent(customTgt)}`;
+      } else if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const s = params.get('source');
+        const t = params.get('target');
+        if (s && t) queryStr = `?source=${encodeURIComponent(s)}&target=${encodeURIComponent(t)}`;
+      }
+
       const [repRes, imgRes] = await Promise.all([
-        fetch(`${apiBase}/api/reports/${encodeURIComponent(runId)}`),
-        fetch(`${apiBase}/api/reports/${encodeURIComponent(runId)}/images`).catch(() => null)
+        fetch(`${apiBase}/api/reports/${encodeURIComponent(runId)}${queryStr}`),
+        fetch(`${apiBase}/api/reports/${encodeURIComponent(runId)}/images${queryStr}`).catch(() => null)
       ]);
 
       if (repRes.ok) {
@@ -84,6 +98,8 @@ export default function ReportsPage() {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       url.searchParams.set('id', runId);
+      url.searchParams.delete('source');
+      url.searchParams.delete('target');
       window.history.pushState({}, '', url.toString());
     }
     loadReport(runId);
@@ -97,14 +113,14 @@ export default function ReportsPage() {
     if (!selectedRunId) return;
     const srcId = src?.id || '';
     const tgtId = tgt?.id || '';
-    window.open(`${apiBase}/api/reports/${selectedRunId}/pdf?source=${srcId}&target=${tgtId}`, '_blank');
+    window.open(`${apiBase}/api/reports/${selectedRunId}/pdf?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
   };
 
   const handleDownloadCSV = () => {
     if (!selectedRunId) return;
     const srcId = src?.id || '';
     const tgtId = tgt?.id || '';
-    window.open(`${apiBase}/api/reports/${selectedRunId}/csv?source=${srcId}&target=${tgtId}`, '_blank');
+    window.open(`${apiBase}/api/reports/${selectedRunId}/csv?source=${encodeURIComponent(srcId)}&target=${encodeURIComponent(tgtId)}`, '_blank');
   };
 
   const src = reportData?.source || DEFAULT_REPORT.source;
